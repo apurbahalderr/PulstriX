@@ -31,11 +31,7 @@ export function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
-<<<<<<< HEAD
                         <Image src="/logo.jpeg" alt="Pulstrix Logo" width={32} height={32} className="object-contain rounded" />
-=======
-                    <img src="/logonew.png" alt="Pulstrix" className="h-20 w-20 object-contain" />
->>>>>>> 5767dc6a71a846327bd0f8c309bdeb59331ede46
                         <span className="text-xl font-bold tracking-tight text-white">Pulstrix</span>
                     </Link>
 
