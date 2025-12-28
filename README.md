@@ -43,7 +43,6 @@ Response teams struggle with:
 
 ### **Priority Tagging**
 The AI reads emergency descriptions and automatically tags them:
-- 🔴 **CRITICAL** - "Fire with people trapped"
 - 🟡 **HIGH** - "Major car accident, injuries"
 - 🟢 **MEDIUM** - "Fallen tree blocking road"
 - 🔵 **LOW** - "Graffiti complaint"
