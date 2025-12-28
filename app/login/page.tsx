@@ -313,6 +313,7 @@ export default function LoginPage() {
                             size="lg"
                             className="w-full justify-start h-16 text-left relative overflow-hidden group"
                             onClick={() => handleRoleSelect('user')}
+
                             leftIcon={<User className="mr-3" />}
                         >
                             <div className="flex flex-col items-start z-10 w-full">
@@ -327,6 +328,7 @@ export default function LoginPage() {
                             size="lg"
                             className="w-full justify-start h-16 text-left relative overflow-hidden group hover:border-alert-high hover:text-alert-high"
                             onClick={() => handleRoleSelect('responder')}
+
                             leftIcon={<Shield className="mr-3" />}
                         >
                             <div className="flex flex-col items-start z-10 w-full">
@@ -341,6 +343,7 @@ export default function LoginPage() {
                             size="lg"
                             className="w-full justify-start h-16 text-left relative overflow-hidden group hover:border-status-assigned hover:text-status-assigned"
                             onClick={() => handleRoleSelect('employee')}
+
                             leftIcon={<Briefcase className="mr-3" />}
                         >
                             <div className="flex flex-col items-start z-10 w-full">
