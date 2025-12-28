@@ -55,7 +55,7 @@ export function Navbar() {
 
                     {/* Auth Actions */}
                     <div className="hidden md:flex items-center space-x-3">
-                        <NotificationManager />
+                        <NotificationManager variant="outline" className="border-primary/30 text-primary hover:bg-primary/10" />
                         {user ? (
                             <div className="flex items-center space-x-3">
                                 <span className="text-sm text-text-secondary">
@@ -135,7 +135,7 @@ export function Navbar() {
             {/* Mobile Floating Notification Button */}
             <div className="md:hidden">
                 <NotificationManager 
-                    className="fixed bottom-6 right-6 z-50 shadow-xl rounded-full !text-white"
+                    className="fixed bottom-6 right-6 z-50 shadow-xl rounded-full"
                     variant="primary"
                 />
             </div>

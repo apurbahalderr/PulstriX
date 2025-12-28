@@ -79,7 +79,7 @@ export default function NotificationManager({ className, variant = "ghost" }: No
       onClick={subscribeUser}
       variant={variant}
       size="sm"
-      className={`text-text-secondary hover:text-white ${className}`}
+      className={className}
       leftIcon={<Bell size={18} />}
     >
       Enable Notifications
