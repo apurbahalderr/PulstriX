@@ -8,11 +8,15 @@ import jwt from "jsonwebtoken";
 
 const loginSchema = z.object({
     name: z.string(),
-    email: z.email(),
+    email: z.string().email(),
     phone: z.coerce.number().refine(val => val.toString().length === 10, { message: "Phone number must be 10 digits" }),
-    sessionId: z.string(),
     accessCode: z.string(),
-    department: z.string()
+    department: z.string(),
+    location: z.object({
+        lat: z.number(),
+        lng: z.number()
+    }),
+    address: z.string()
 })
 
 //resonder ka sign in ke liye ye page h
@@ -28,7 +32,7 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        const { email, name, accessCode, phone, department } = parsedBody.data;
+        const { email, name, accessCode, phone, department, location, address } = parsedBody.data;
         await dbConnect();
         let responder = await Responder.findOne({ email });
 
@@ -47,7 +51,9 @@ export async function POST(req: NextRequest) {
                 email,
                 phone,
                 role: "responder",
-                department
+                department,
+                location,
+                address
             })
         }
 

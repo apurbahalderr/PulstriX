@@ -7,6 +7,7 @@ export interface IResponder extends Document {
     role: "responder";
     department: string;
     location: { lat: number, lng: number };
+    address: string;
     employees?: string[] //sare employees ka id hoga jo is responder se juda hua h
 }
 
@@ -20,6 +21,7 @@ const ResponderSchema = new Schema<IResponder>({
         lat: { type: Number },
         lng: { type: Number }
     },
+    address: {type: String, required: true},
     employees: [{type: String}],
 }, {
     timestamps: true
