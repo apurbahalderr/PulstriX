@@ -1,138 +1,187 @@
-'use client';
-
 import { Report } from '@/types';
-import { X, MapPin, Clock, ThumbsUp, ThumbsDown, User, ShieldAlert, Phone } from 'lucide-react';
+import { X, ThumbsUp, ThumbsDown, MapPin, Clock, ImageIcon, Target } from 'lucide-react';
+import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 interface IncidentDetailsModalProps {
   incident: Report;
   onClose: () => void;
-  onVote: (e: React.MouseEvent, reportId: string, action: 'upvote' | 'downvote') => void;
+  onVote: (e: React.MouseEvent, id: string, action: 'upvote' | 'downvote') => void;
+  onLocationClick?: () => void;
+  position?: { top: number; left: number; width?: number };
 }
 
-export default function IncidentDetailsModal({ incident, onClose, onVote }: IncidentDetailsModalProps) {
-  if (!incident) return null;
+export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClick, position }: IncidentDetailsModalProps) {
+  const pathname = usePathname();
+  const isDashboard = pathname?.includes('dashboard');
 
-  const formattedDate = new Date(incident.createdAt).toLocaleDateString(undefined, {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
+  // If position is provided, we render as a popover
+  const style = position ? {
+    position: 'fixed' as const,
+    bottom: "20px",
+    right: "5px",
+    zIndex: 50,
+    marginTop: 0,
+    width: "400px",
+    maxHeight: "70vh"
+  } : undefined;
+
+  const content = (
+    <div
+      className={`bg-bg-card rounded-2xl border border-border-main shadow-2xl overflow-hidden flex flex-col ${!position ? 'w-full max-w-2xl max-h-[90vh]' : ''}`}
+      style={style}
+      onClick={e => e.stopPropagation()}
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-border-main flex justify-between items-start bg-bg-secondary">
+        <div>
+          <div className="flex gap-2 items-center mb-1">
+            <Badge priority={incident.severity}>{incident.type}</Badge>
+            <Badge variant="outline" status={incident.status}>{incident.status}</Badge>
+            {isDashboard && onLocationClick && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLocationClick();
+                }}
+                className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors flex items-center gap-1"
+                title="Pin Location on Map"
+              >
+                <MapPin size={10} />
+                Pin
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-xs text-text-muted">
+            <Clock size={12} />
+            {new Date(incident.createdAt).toLocaleString()}
+          </div>
+        </div>
+        <button onClick={onClose} className="text-text-muted hover:text-text-primary p-1 hover:bg-bg-main rounded-full transition-colors">
+          <X size={24} />
+        </button>
+      </div>
+
+      {/* Scrollable Content */}
+      <div className="overflow-y-auto p-6 space-y-6">
+        {/* Description */}
+        <div>
+          <h3 className="text-sm font-semibold text-text-secondary mb-2 uppercase tracking-wider">Description</h3>
+          <p className="text-text-primary leading-relaxed text-lg">
+            {incident.description}
+          </p>
+        </div>
+
+        {/* Report Stats */}
+        {/* Report Stats - Compact Tags */}
+        <div className="flex flex-wrap gap-2">
+          <Badge priority={incident.severity} className="flex items-center gap-1">
+            AI Score: {incident.severity === 'high' ? 'High' : incident.severity === 'medium' ? 'Med' : 'Low'}
+          </Badge>
+          <div className="flex gap-2">
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-bg-secondary border border-border-main text-xs text-primary font-medium">
+              <ThumbsUp size={12} /> {incident.upvotes} Verify
+            </span>
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-bg-secondary border border-border-main text-xs text-alert-critical font-medium">
+              <ThumbsDown size={12} /> {incident.downvotes} False
+            </span>
+            {incident.duplicates > 0 && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-bg-secondary border border-border-main text-xs text-text-secondary font-medium">
+                <span className="font-bold">{incident.duplicates}</span> Duplicates
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Image & Location Action */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Evidence</h3>
+            <div className="flex items-center gap-2">
+              <div className="text-xs text-text-muted">
+                {incident.location.lat.toFixed(6)}, {incident.location.lng.toFixed(6)}
+              </div>
+              {isDashboard && onLocationClick && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onLocationClick();
+                  }}
+                  className="flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  <Target size={12} />
+                  Focus on Map
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-xl overflow-hidden border border-border-main bg-bg-secondary flex items-center justify-center min-h-[200px]">
+            {incident.image ? (
+              // Using standard img tag for simplicity if unsure about domain config, 
+              // or Next.js Image if configured. 
+              // Given previous context, sticking to standard img is safer unless we know domain.
+              // But prompt said "reconfigure dashboard page...". 
+              // I'll use standard img with object-cover.
+              <img
+                src={incident.image}
+                alt="Incident Evidence"
+                className="w-full h-auto max-h-[400px] object-cover"
+              />
+            ) : (
+              <div className="flex flex-col items-center py-10 text-text-muted">
+                <ImageIcon size={48} className="mb-2 opacity-50" />
+                <span className="text-sm">No image available</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Actions */}
+      <div className="p-4 border-t border-border-main bg-bg-secondary flex gap-3">
+        <Button
+          onClick={(e) => onVote(e, incident._id, 'upvote')}
+          variant="outline"
+          className="flex-1 border-primary/20 text-primary hover:bg-primary/10"
+          leftIcon={<ThumbsUp size={18} />}
+        >
+          Verify
+        </Button>
+        <Button
+          onClick={(e) => onVote(e, incident._id, 'downvote')}
+          variant="outline"
+          className="flex-1 border-alert-critical/20 text-alert-critical hover:bg-alert-critical/10"
+          leftIcon={<ThumbsDown size={18} />}
+        >
+          False
+        </Button>
+      </div>
+    </div>
+  );
+
+  if (position) {
+    return (
+      <div className="fixed inset-0 z-50 pointer-events-none" onClick={onClose}>
+        {/* Transparent overlay that catches clicks only if we want to close on outside click. 
+            But to keep map interactive, we might want to NOT block events? 
+            User said "appear over the card... map should be clearly visible".
+            If I make this pointer-events-none, I can't close by clicking outside.
+            Actually, let's make the wrapper pointer-events-none and the modal content pointer-events-auto.
+            To allow map interaction, we shouldn't have a full screen blocker.
+             */}
+        <div className="pointer-events-auto contents">
+          {content}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-bg-card rounded-2xl shadow-2xl border border-border-main flex flex-col max-h-[90vh] overflow-hidden">
-
-        {/* Header */}
-        <div className="p-6 border-b border-border-main flex justify-between items-start">
-          <div>
-            <div className="flex items-center space-x-3 mb-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                                ${incident.severity === 'high' ? 'bg-alert-critical/20 text-alert-critical border border-alert-critical/20' :
-                  incident.severity === 'medium' ? 'bg-alert-medium/20 text-alert-medium border border-alert-medium/20' :
-                    'bg-alert-low/20 text-alert-low border border-alert-low/20'}`}>
-                {incident.severity} Priority
-              </span>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                                ${incident.status === 'resolved' ? 'bg-status-resolved/20 text-status-resolved border border-status-resolved/20' :
-                  incident.status === 'verified' ? 'bg-primary/20 text-primary border border-primary/20' :
-                    'bg-text-muted/20 text-text-muted border border-text-muted/20'}`}>
-                {incident.status}
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-1">{incident.type}</h2>
-            <div className="flex items-center text-text-secondary text-sm">
-              <Clock size={14} className="mr-1.5" />
-              {formattedDate}
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-bg-secondary text-text-muted hover:text-white transition-colors"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-6">
-          {/* Description */}
-          <div>
-            <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider mb-2">Description</h3>
-            <p className="text-white leading-relaxed text-lg">
-              {incident.description}
-            </p>
-          </div>
-
-          {/* Location */}
-          <div className="flex items-start space-x-3 p-4 bg-bg-secondary/50 rounded-xl border border-border-main">
-            <div className="bg-primary/10 p-2 rounded-lg text-primary">
-              <MapPin size={24} />
-            </div>
-            <div>
-              <h3 className="text-white font-bold">Location Details</h3>
-              <p className="text-text-secondary text-sm">
-                Coordinates: {incident.location.lat.toFixed(6)}, {incident.location.lng.toFixed(6)}
-              </p>
-              {/* In a real app, a mini-map would go here */}
-              <div className="mt-2 text-xs text-text-muted italic">Map view available on main dashboard</div>
-            </div>
-          </div>
-
-          {/* Reporter Info (Anonymized usually, but showing structured data) */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-bg-secondary/30 rounded-xl border border-border-main">
-              <div className="flex items-center space-x-2 mb-2 text-text-muted">
-                <ShieldAlert size={16} />
-                <span className="text-xs font-bold uppercase">Votes</span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center text-primary">
-                  <ThumbsUp size={20} className="mr-1.5" />
-                  <span className="text-xl font-bold">{incident.upvotes}</span>
-                </div>
-                <div className="flex items-center text-alert-critical">
-                  <ThumbsDown size={20} className="mr-1.5" />
-                  <span className="text-xl font-bold">{incident.downvotes}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 bg-bg-secondary/30 rounded-xl border border-border-main">
-              <div className="flex items-center space-x-2 mb-2 text-text-muted">
-                <User size={16} />
-                <span className="text-xs font-bold uppercase">Responder Notes</span>
-              </div>
-              <p className="text-sm text-white">
-                {incident.responderNotes || "No notes added by responders yet."}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="p-6 border-t border-border-main bg-bg-secondary/20 flex justify-end space-x-3">
-          <Button variant="outline" onClick={onClose}>
-            Close
-          </Button>
-          <div className="flex space-x-2">
-            <Button
-              variant="secondary"
-              leftIcon={<ThumbsUp size={16} />}
-              onClick={(e) => onVote(e as any, incident._id, 'upvote')}
-            >
-              Verify
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-alert-critical hover:bg-alert-critical/10 hover:text-alert-critical"
-              leftIcon={<ThumbsDown size={16} />}
-              onClick={(e) => onVote(e as any, incident._id, 'downvote')}
-            >
-              False Report
-            </Button>
-          </div>
-        </div>
-
-      </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
+      {content}
     </div>
   );
 }
