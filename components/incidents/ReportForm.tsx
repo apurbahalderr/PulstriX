@@ -115,7 +115,7 @@ export function ReportForm() {
             const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY || 'pk.5d609655555555555555555555555555'; // Replace with actual key or env var
             // Note: If you don't have a key, this will fail. 
             // Ideally: const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;
-            
+
             const response = await fetch(`https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(searchQuery)}&format=json`);
             const data = await response.json();
 
@@ -146,7 +146,6 @@ export function ReportForm() {
             return;
         }
 
-        // Phone validation
         if (formData.phone && formData.phone.length !== 10) {
             alert("Phone number must be 10 digits");
             return;
@@ -161,7 +160,7 @@ export function ReportForm() {
             }
 
             const sessionId = localStorage.getItem("sessionId") || "anonymous";
-            
+
             const payload = {
                 sessionId,
                 userId: user?._id,
@@ -188,7 +187,7 @@ export function ReportForm() {
 
             if (result.success) {
                 alert("Report Submitted Successfully!");
-                // Reset form
+              
                 setFormData({
                     type: '' as ReportType | '',
                     description: '',
@@ -211,7 +210,7 @@ export function ReportForm() {
 
     const handleLocationSelect = (lat: number, lng: number) => {
         setFormData(prev => ({ ...prev, location: [lat, lng] }));
-        // Don't necessarily move center on click, just update marker
+       
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,11 +270,11 @@ export function ReportForm() {
                         <label className="block text-sm font-medium text-text-secondary mb-2">
                             Location <span className="text-text-muted font-normal">(Tap on map or search)</span>
                         </label>
-                        
+
                         {/* Search and Geolocation Controls */}
                         <div className="flex gap-2 mb-2 relative z-20">
                             <div className="relative flex-1">
-                                <input 
+                                <input
                                     type="text"
                                     placeholder="Search address..."
                                     className="w-full bg-bg-secondary border border-border-main rounded-lg pl-3 pr-10 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
@@ -285,7 +284,7 @@ export function ReportForm() {
                                     onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddressSearch())}
                                 />
-                                <button 
+                                <button
                                     type="button"
                                     onClick={handleAddressSearch}
                                     className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary"
@@ -293,7 +292,7 @@ export function ReportForm() {
                                 >
                                     {isSearching ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
                                 </button>
-                                
+
                                 {showSuggestions && suggestions.length > 0 && (
                                     <div className="absolute top-full left-0 right-0 mt-1 bg-bg-secondary border border-border-main rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
                                         {suggestions.map((suggestion, index) => (
@@ -309,9 +308,9 @@ export function ReportForm() {
                                     </div>
                                 )}
                             </div>
-                            <Button 
-                                type="button" 
-                                variant="outline" 
+                            <Button
+                                type="button"
+                                variant="outline"
                                 size="sm"
                                 onClick={handleBrowserGeolocation}
                                 disabled={isLocating}
@@ -366,13 +365,12 @@ export function ReportForm() {
                                     id="evidence-upload"
                                     onChange={handleFileChange}
                                 />
-                                <label 
-                                    htmlFor="evidence-upload" 
-                                    className={`flex items-center justify-center w-full px-4 py-2 text-sm font-medium border rounded-md cursor-pointer transition-colors ${
-                                        formData.image 
-                                            ? 'bg-primary/10 text-primary border-primary' 
+                                <label
+                                    htmlFor="evidence-upload"
+                                    className={`flex items-center justify-center w-full px-4 py-2 text-sm font-medium border rounded-md cursor-pointer transition-colors ${formData.image
+                                            ? 'bg-primary/10 text-primary border-primary'
                                             : 'bg-transparent text-text-primary border-border-main hover:bg-bg-secondary'
-                                    }`}
+                                        }`}
                                 >
                                     <Camera size={16} className="mr-2" />
                                     {formData.image ? 'Image Selected' : 'Upload'}
