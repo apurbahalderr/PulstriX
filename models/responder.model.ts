@@ -6,6 +6,7 @@ export interface IResponder extends Document {
     phone: number;
     role: "responder";
     department: string;
+    location: { lat: number, lng: number };
     employees?: string[] //sare employees ka id hoga jo is responder se juda hua h
 }
 
@@ -15,9 +16,15 @@ const ResponderSchema = new Schema<IResponder>({
     phone: {type: Number, required: true},
     role: {type: String, enum: ["responder"], default: "responder"},
     department: {type: String, required: true},
+    location: {
+        lat: { type: Number },
+        lng: { type: Number }
+    },
     employees: [{type: String}],
 }, {
     timestamps: true
 })
+
+ResponderSchema.index({ location: "2dsphere" });
 
 export const Responder = mongoose.models.Responder || mongoose.model<IResponder>("Responder", ResponderSchema)

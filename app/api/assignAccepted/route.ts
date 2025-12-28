@@ -25,7 +25,7 @@ export async function POST(req: NextRequest){
             return NextResponse.json(
                 new ApiResponse(true, "Report assignment accepted"), { status: 200 }
             )
-        } else if(action === "rejected"){
+        } else if(action === "rejected"){ //FIXME: isko hatana h agar frontend nahi ban paya to
             const employees = await Employee.find({department: report.type, responder: report.responderId, status: "idle", _id: { $ne: employeeId } });
             if(employees.length === 0){
                 return NextResponse.json(
