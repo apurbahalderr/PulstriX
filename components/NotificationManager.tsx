@@ -34,9 +34,9 @@ export default function NotificationManager({ className, variant = "ghost" }: No
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
       // Check if already subscribed
-      navigator.serviceWorker.ready.then(function(reg) {
+      navigator.serviceWorker.ready.then(function (reg) {
         setRegistration(reg);
-        reg.pushManager.getSubscription().then(function(sub) {
+        reg.pushManager.getSubscription().then(function (sub) {
           if (sub) {
             setIsSubscribed(true);
             setSubscription(sub);
@@ -46,11 +46,11 @@ export default function NotificationManager({ className, variant = "ghost" }: No
 
       // Register if not already
       navigator.serviceWorker.register('/sw.js')
-        .then(function(reg) {
+        .then(function (reg) {
           console.log('Service Worker Registered', reg);
           setRegistration(reg);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error('Service Worker Registration Failed', error);
         });
     }
@@ -77,8 +77,8 @@ export default function NotificationManager({ className, variant = "ghost" }: No
         setIsLoading(false);
         return;
       }
-    
-      const applicationServerKey = urlBase64ToUint8Array('BA8JjGcf9qRxBDRt-bhYXLICDRj28tL3izZC-7ZN8vNXh2tkAJfou6a0qwWUHpGbDMOJhSr_NsAjGyybhIITRJo'); 
+
+      const applicationServerKey = urlBase64ToUint8Array('BA8JjGcf9qRxBDRt-bhYXLICDRj28tL3izZC-7ZN8vNXh2tkAJfou6a0qwWUHpGbDMOJhSr_NsAjGyybhIITRJo');
 
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
@@ -87,7 +87,7 @@ export default function NotificationManager({ className, variant = "ghost" }: No
       console.log('User is subscribed:', sub);
       setSubscription(sub);
       setIsSubscribed(true);
-      
+
       await fetch('/api/notifications/subscribe', {
         method: 'POST',
         body: JSON.stringify(sub),
@@ -96,7 +96,7 @@ export default function NotificationManager({ className, variant = "ghost" }: No
 
     } catch (err: any) {
       console.error('Failed to subscribe the user: ', err);
-      
+
       if ((Notification.permission as NotificationPermission) === 'denied') {
         alert("Notifications are blocked. Please enable them in your browser settings (click the lock icon in the address bar).");
       } else {
@@ -108,18 +108,19 @@ export default function NotificationManager({ className, variant = "ghost" }: No
   }
 
   if (!user) return null;
-  if (isSubscribed) return null;
+  // Previously returned null if subscribed. Now we show state.
 
   return (
-    <Button 
-      onClick={subscribeUser}
-      variant={variant}
+    <Button
+      onClick={isSubscribed ? undefined : subscribeUser}
+      variant={isSubscribed ? "outline" : variant} // Show outline if active to be subtle
       size="sm"
-      className={className}
-      leftIcon={<Bell size={18} />}
+      className={`${className} ${isSubscribed ? 'opacity-70 cursor-default border-green-500/50 text-green-500' : ''}`}
+      leftIcon={<Bell size={18} className={isSubscribed ? "fill-current" : ""} />}
       isLoading={isLoading}
+      disabled={isSubscribed} // Disable clicking if already on
     >
-      Enable Notifications
+      {isSubscribed ? 'Notifications On' : 'Enable Notifications'}
     </Button>
   )
 }
