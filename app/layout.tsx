@@ -4,6 +4,7 @@ import "./globals.css";
 import NotificationManager from "@/components/NotificationManager";
 import { AuthProvider } from "@/context/AuthContext";
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 
 const geistSans = Geist({
@@ -40,6 +41,7 @@ export default function RootLayout({
               {children}
             </PageTransition>
           </main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>
