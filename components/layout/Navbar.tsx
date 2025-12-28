@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, Activity } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export function Navbar() {
@@ -30,7 +31,7 @@ export function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
-                        <Activity className="h-8 w-8 text-primary" />
+                    <img src="/logonew.png" alt="Pulstrix" className="h-20 w-20 object-contain" />
                         <span className="text-xl font-bold tracking-tight text-white">Pulstrix</span>
                     </Link>
 
