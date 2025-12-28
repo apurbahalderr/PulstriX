@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Report } from '@/types';
+import { Report, User } from '@/types';
 
 // Fix Leaflet default icon issue in Next.js
 const iconUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png';
@@ -37,6 +37,8 @@ const severityIcons: Record<string, L.DivIcon> = {
     low: createCustomIcon('#22C55E'), // green
 };
 
+const employeeIcon = createCustomIcon('#3B82F6'); // blue for employee
+
 // Component to handle map clicks
 function MapEvents({ onLocationSelect }: { onLocationSelect?: (lat: number, lng: number) => void }) {
     useMapEvents({
@@ -60,22 +62,26 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
 
 interface LiveMapProps {
     incidents?: Report[];
+    employees?: User[]; // Add employees prop
     center?: [number, number];
     zoom?: number;
     interactive?: boolean;
     onLocationSelect?: (lat: number, lng: number) => void;
     selectedLocation?: [number, number] | null;
     className?: string;
+    selectedIncident?: Report | null;
 }
 
 export default function LiveMap({
     incidents = [],
-    center = [20.2961, 85.8245], // Default to Bhubaneswar (KIIT area) or generic
+    employees = [], // specific employees to show (e.g. idle ones)
+    center = [20.2961, 85.8245],
     zoom = 13,
     interactive = true,
     onLocationSelect,
     selectedLocation,
-    className = "h-full w-full rounded-lg"
+    className = "h-full w-full rounded-lg",
+    selectedIncident
 }: LiveMapProps) {
     // Fix for window is not defined during SSR
     const [mounted, setMounted] = useState(false);
@@ -108,19 +114,19 @@ export default function LiveMap({
                     const sevKey = (incident.severity || '').toString().toLowerCase();
                     const icon = severityIcons[sevKey] || defaultIcon;
                     return (
-                    <Marker
-                        key={incident._id}
-                        position={[incident.location.lat, incident.location.lng]}
-                        icon={icon}
-                    >
-                        <Popup className="leaflet-popup-dark">
-                            <div className="text-gray-900">
-                                <h3 className="font-bold">{incident.type}</h3>
-                                <p className="text-sm">{incident.description}</p>
-                                <div className="text-xs mt-1">Status: {incident.status}</div>
-                            </div>
-                        </Popup>
-                    </Marker>
+                        <Marker
+                            key={incident._id}
+                            position={[incident.location.lat, incident.location.lng]}
+                            icon={icon}
+                        >
+                            <Popup className="leaflet-popup-dark">
+                                <div className="text-gray-900">
+                                    <h3 className="font-bold">{incident.type}</h3>
+                                    <p className="text-sm">{incident.description}</p>
+                                    <div className="text-xs mt-1">Status: {incident.status}</div>
+                                </div>
+                            </Popup>
+                        </Marker>
                     );
                 })}
 
@@ -130,6 +136,50 @@ export default function LiveMap({
                         position={selectedLocation}
                         icon={defaultIcon}
                     />
+                )}
+
+                {/* Render Employees */}
+                {employees.map((emp) => {
+                    if (!emp.location) return null;
+                    return (
+                        <Marker
+                            key={emp._id || emp.id}
+                            position={[emp.location.lat, emp.location.lng]}
+                            icon={employeeIcon}
+                        >
+                            <Popup className="leaflet-popup-dark">
+                                <div className="text-gray-900">
+                                    <h3 className="font-bold">{emp.name}</h3>
+                                    <p className="text-xs">{emp.role} - {emp.status}</p>
+                                    <p className="text-xs">{emp.phone}</p>
+                                </div>
+                            </Popup>
+                        </Marker>
+                    );
+                })}
+
+                {/* Render Selected Incident Employee (if any) - override if already in list? 
+                    Reuse filtering if needed, but for now showing specific path is useful 
+                 */}
+                {selectedIncident && selectedIncident.employeeLocation && (
+                    <>
+                        <Marker
+                            position={[selectedIncident.employeeLocation.lat, selectedIncident.employeeLocation.lng]}
+                            icon={employeeIcon}
+                        >
+                            <Popup>
+                                <div className="text-sm font-bold text-gray-900">Assigned Employee</div>
+                            </Popup>
+                        </Marker>
+                        <Polyline
+                            positions={[
+                                [selectedIncident.location.lat, selectedIncident.location.lng],
+                                [selectedIncident.employeeLocation.lat, selectedIncident.employeeLocation.lng]
+                            ]}
+                            color="blue"
+                            dashArray="5, 10"
+                        />
+                    </>
                 )}
 
                 <MapEvents onLocationSelect={onLocationSelect} />
