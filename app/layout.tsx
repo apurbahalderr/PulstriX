@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Emergency SOS",
+  title: "PulstriX - The Pulse of Prevention",
   description: "Immediate Emergency Reporting & Response System",
   manifest: "/manifest.json",
 };
