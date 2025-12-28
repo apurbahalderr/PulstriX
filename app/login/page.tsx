@@ -12,7 +12,7 @@ import { setSessionId } from '@/utils/setSessionId';
 export default function LoginPage() {
     const { login } = useAuth();
     const router = useRouter();
-    const [selectedRole, setSelectedRole] = useState<'CITIZEN' | 'RESPONDER' | 'EMPLOYEE' | null>(null);
+    const [selectedRole, setSelectedRole] = useState<'user' | 'responder' | 'employee' | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string>('');
     
@@ -26,8 +26,7 @@ export default function LoginPage() {
         address: '',
     });
 
-<<<<<<< HEAD
-    const handleRoleSelect = (role: 'CITIZEN' | 'RESPONDER' | 'EMPLOYEE') => {
+    const handleRoleSelect = (role: 'user' | 'responder' | 'employee') => {
         setSelectedRole(role);
         setError('');
         setFormData({
@@ -54,7 +53,7 @@ export default function LoginPage() {
             let response;
             let userData;
 
-            if (selectedRole === 'CITIZEN') {
+            if (selectedRole === 'user') {
                 // Set session ID for citizen
                 setSessionId();
                 const sessionId = localStorage.getItem('sessionId') || '';
@@ -80,9 +79,9 @@ export default function LoginPage() {
                     name: data.data.name,
                     email: data.data.email,
                     phone: data.data.phone?.toString(),
-                    role: 'CITIZEN' as const,
+                    role: 'user' as const,
                 };
-            } else if (selectedRole === 'EMPLOYEE') {
+            } else if (selectedRole === 'employee') {
                 response = await fetch('/api/signin/employee', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -104,10 +103,10 @@ export default function LoginPage() {
                     name: data.data.name,
                     email: data.data.email,
                     phone: data.data.phone?.toString(),
-                    role: 'EMPLOYEE' as const,
+                    role: 'employee' as const,
                     department: data.data.department,
                 };
-            } else if (selectedRole === 'RESPONDER') {
+            } else if (selectedRole === 'responder') {
                 // Get user location for responder
                 let location = { lat: 0, lng: 0 };
                 let address = formData.address;
@@ -150,7 +149,7 @@ export default function LoginPage() {
                     name: data.data.name,
                     email: data.data.email,
                     phone: data.data.phone?.toString(),
-                    role: 'RESPONDER' as const,
+                    role: 'responder' as const,
                     department: data.data.department,
                     accessCode: formData.accessCode,
                 };
@@ -158,7 +157,7 @@ export default function LoginPage() {
 
             if (userData) {
                 login(userData);
-                if (selectedRole === 'CITIZEN') {
+                if (selectedRole === 'user') {
                     router.push('/dashboard');
                 } else {
                     router.push('/responder');
@@ -168,14 +167,6 @@ export default function LoginPage() {
             setError(err instanceof Error ? err.message : 'An error occurred during sign in');
         } finally {
             setIsLoading(false);
-=======
-    const handleLogin = (role: 'user' | 'responder' | 'employee') => {
-        login(role);
-        if (role === 'user') {
-            router.push('/dashboard');
-        } else {
-            router.push('/responder'); // Employees and Responders go to responder view
->>>>>>> 5767dc6a71a846327bd0f8c309bdeb59331ede46
         }
     };
 
@@ -194,9 +185,9 @@ export default function LoginPage() {
                                 Back
                             </Button>
                             <CardTitle className="text-2xl">
-                                {selectedRole === 'CITIZEN' && 'Citizen Sign In'}
-                                {selectedRole === 'RESPONDER' && 'Responder Sign In'}
-                                {selectedRole === 'EMPLOYEE' && 'Employee Sign In'}
+                                {selectedRole === 'user' && 'Citizen Sign In'}
+                                {selectedRole === 'responder' && 'Responder Sign In'}
+                                {selectedRole === 'employee' && 'Employee Sign In'}
                             </CardTitle>
                         </div>
                     </CardHeader>
@@ -230,7 +221,7 @@ export default function LoginPage() {
                                 maxLength={10}
                             />
 
-                            {(selectedRole === 'EMPLOYEE' || selectedRole === 'RESPONDER') && (
+                            {(selectedRole === 'employee' || selectedRole === 'responder') && (
                                 <Input
                                     label="Department"
                                     type="text"
@@ -241,7 +232,7 @@ export default function LoginPage() {
                                 />
                             )}
 
-                            {selectedRole === 'RESPONDER' && (
+                            {selectedRole === 'responder' && (
                                 <>
                                     <Input
                                         label="Access Code"
@@ -321,11 +312,8 @@ export default function LoginPage() {
                             variant="outline"
                             size="lg"
                             className="w-full justify-start h-16 text-left relative overflow-hidden group"
-<<<<<<< HEAD
-                            onClick={() => handleRoleSelect('CITIZEN')}
-=======
-                            onClick={() => handleLogin('user')}
->>>>>>> 5767dc6a71a846327bd0f8c309bdeb59331ede46
+                            onClick={() => handleRoleSelect('user')}
+
                             leftIcon={<User className="mr-3" />}
                         >
                             <div className="flex flex-col items-start z-10 w-full">
@@ -339,11 +327,8 @@ export default function LoginPage() {
                             variant="outline"
                             size="lg"
                             className="w-full justify-start h-16 text-left relative overflow-hidden group hover:border-alert-high hover:text-alert-high"
-<<<<<<< HEAD
-                            onClick={() => handleRoleSelect('RESPONDER')}
-=======
-                            onClick={() => handleLogin('responder')}
->>>>>>> 5767dc6a71a846327bd0f8c309bdeb59331ede46
+                            onClick={() => handleRoleSelect('responder')}
+
                             leftIcon={<Shield className="mr-3" />}
                         >
                             <div className="flex flex-col items-start z-10 w-full">
@@ -357,11 +342,8 @@ export default function LoginPage() {
                             variant="outline"
                             size="lg"
                             className="w-full justify-start h-16 text-left relative overflow-hidden group hover:border-status-assigned hover:text-status-assigned"
-<<<<<<< HEAD
-                            onClick={() => handleRoleSelect('EMPLOYEE')}
-=======
-                            onClick={() => handleLogin('employee')}
->>>>>>> 5767dc6a71a846327bd0f8c309bdeb59331ede46
+                            onClick={() => handleRoleSelect('employee')}
+
                             leftIcon={<Briefcase className="mr-3" />}
                         >
                             <div className="flex flex-col items-start z-10 w-full">
