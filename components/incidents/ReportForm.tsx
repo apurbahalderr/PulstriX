@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -25,6 +25,9 @@ export function ReportForm() {
         image: null as File | null
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isRecognizing, setIsRecognizing] = useState(false);
+    const recognitionRef = useRef<any | null>(null);
+    const finalTranscriptRef = useRef<string>('');
     const [isLocating, setIsLocating] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
@@ -72,6 +75,65 @@ export function ReportForm() {
                 setIsLocating(false);
             }
         );
+    };
+
+    // Speech recognition (voice -> text) for description
+    const startRecognition = () => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert('Speech Recognition is not supported in your browser. Try Chrome on desktop or Android.');
+            return;
+        }
+
+        try {
+            finalTranscriptRef.current = formData.description || '';
+
+            const rec = new SpeechRecognition();
+            rec.lang = 'en-US';
+            rec.interimResults = true;
+            rec.continuous = true;
+
+            rec.onresult = (event: any) => {
+                let interim = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const res = event.results[i];
+                    if (res.isFinal) {
+                        finalTranscriptRef.current += (res[0].transcript || '') + ' ';
+                    } else {
+                        interim += (res[0].transcript || '');
+                    }
+                }
+                setFormData(prev => ({ ...prev, description: (finalTranscriptRef.current || '') + (interim || '') }));
+            };
+
+            rec.onerror = (err: any) => {
+                console.error('Speech recognition error', err);
+            };
+
+            rec.onend = () => {
+                setIsRecognizing(false);
+                recognitionRef.current = null;
+            };
+
+            recognitionRef.current = rec;
+            rec.start();
+            setIsRecognizing(true);
+        } catch (err) {
+            console.error('Failed to start speech recognition', err);
+            alert('Unable to start speech recognition');
+        }
+    };
+
+    const stopRecognition = () => {
+        try {
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+                recognitionRef.current = null;
+            }
+        } catch (err) {
+            console.error('Error stopping recognition', err);
+        }
+        setIsRecognizing(false);
     };
 
     useEffect(() => {
@@ -255,14 +317,30 @@ export function ReportForm() {
                     {/* Description */}
                     <div>
                         <label className="block text-sm font-medium text-text-secondary mb-2">Description</label>
-                        <textarea
-                            required
-                            rows={3}
-                            className="w-full bg-bg-secondary border border-border-main rounded-lg p-3 text-text-primary focus:ring-2 focus:ring-primary focus:outline-none"
-                            placeholder="Describe what happened..."
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        />
+                        <div className="relative">
+                            <textarea
+                                required
+                                rows={3}
+                                className="w-full bg-bg-secondary border border-border-main rounded-lg p-3 text-text-primary focus:ring-2 focus:ring-primary focus:outline-none pr-32"
+                                placeholder="Describe what happened..."
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            />
+
+                            <div className="absolute right-2 top-2 flex flex-col items-end space-y-2">
+                                <button
+                                    type="button"
+                                    onClick={() => (isRecognizing ? stopRecognition() : startRecognition())}
+                                    title={isRecognizing ? 'Stop voice capture' : 'Speak to fill description'}
+                                    className={`inline-flex items-center px-3 py-2 text-xs font-medium rounded-md ${isRecognizing ? 'bg-red-600 text-white' : 'bg-bg-secondary text-text-primary border border-border-main hover:bg-bg-secondary/90'}`}
+                                >
+                                    <span className="mr-2">{isRecognizing ? '🔴' : '🎤'}</span>
+                                    <span>{isRecognizing ? 'Stop' : 'Speak'}</span>
+                                </button>
+
+                                <div className="text-xs text-text-muted">{isRecognizing ? 'Listening...' : 'Voice input'}</div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Location Picker */}
