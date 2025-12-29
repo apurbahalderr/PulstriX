@@ -3,9 +3,9 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
-from text_dedup.encoder import TextEncoder
-from text_dedup.filtering import filter_recent_incidents
-from text_dedup.dedup_logic import is_duplicate_incident
+from encoder import TextEncoder
+from filtering import filter_recent_incidents
+from dedup_logic import is_duplicate_incident
 
 
 app = FastAPI(title="Incident Text Dedup Service")

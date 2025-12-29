@@ -1,6 +1,7 @@
 
 import { Responder } from "@/models/responder.model";
 import { Report } from "@/models/report.model";
+import { classifyPriority } from "./mlClient";
 
 const departmentMapping: Record<string, string> = {
     "Fire": "Fire Department",
@@ -21,24 +22,31 @@ export default async function verifyByMLModel(
     location: { lat: number; lng: number }, 
     description: string
 ) {
-    // 1. Call ML Model (Mocked for now)
-    // In a real scenario, you would send the image and description to a Python/Flask/FastAPI service
-    // const mlResponse = await fetch('http://ml-service/predict', { ... });
-    // const { verifiedType, verifiedSeverity, confidence } = await mlResponse.json();
-    
-    // Mocking ML logic:
-    // Assume the ML model trusts the user input but might upgrade severity based on keywords
-    let verifiedType = type;
+    // 1. Call ML Model
     let verifiedSeverity = severity;
     
-
-    //FIXME: Severity will also be predicted by ML model based on image and description
-    const criticalKeywords = ["fire", "blood", "explosion", "dead", "collapse"];
-    if (criticalKeywords.some(word => description.toLowerCase().includes(word))) {
-        verifiedSeverity = "high";
+    const priorityResult = await classifyPriority(reportId, type, description, !!image);
+    
+    if (priorityResult && priorityResult.priority) {
+        // Map ML output (HIGH, MEDIUM, LOW) to our lowercase format
+        verifiedSeverity = priorityResult.priority.toLowerCase();
+        console.log(`ML Priority Classification: ${verifiedSeverity} (Confidence: ${priorityResult.confidence})`);
+        
+        // Update the report with the verified severity
+        try {
+            await Report.findByIdAndUpdate(reportId, { severity: verifiedSeverity });
+        } catch (err) {
+            console.error("Failed to update report severity", err);
+        }
+    } else {
+        // Fallback to keyword matching if ML fails
+        const criticalKeywords = ["fire", "blood", "explosion", "dead", "collapse"];
+        if (criticalKeywords.some(word => description.toLowerCase().includes(word))) {
+            verifiedSeverity = "high";
+        }
     }
 
-    const department = departmentMapping[verifiedType];
+    const department = departmentMapping[type];
     
     const nearestResponder = await Responder.findOne({
         department: department,
