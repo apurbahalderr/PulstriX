@@ -39,12 +39,19 @@ export function IncidentFeed() {
     const handleVote = async (e: React.MouseEvent, reportId: string, action: 'upvote' | 'downvote') => {
         e.stopPropagation(); // Prevent card click
         if (isVoting) return;
+
+        const sessionId = localStorage.getItem("sessionId");
+        if (!sessionId) {
+            alert("Session ID missing. Please refresh the page.");
+            return;
+        }
+
         setIsVoting(true);
         try {
             const response = await fetch('/api/vote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ reportId, action })
+                body: JSON.stringify({ reportId, action, sessionId })
             });
             const data = await response.json();
             if (data.success) {
@@ -55,6 +62,8 @@ export function IncidentFeed() {
                 if (selectedIncident && selectedIncident._id === reportId) {
                     setSelectedIncident(data.data);
                 }
+            } else {
+                alert(data.error || "Vote failed");
             }
         } catch (error) {
             console.error("Vote failed:", error);

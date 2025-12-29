@@ -14,6 +14,7 @@ export interface IReport extends Document {
     image?: string;
     upvotes: number;
     downvotes: number;
+    votedBy?: string[];
     duplicates: number;
     severity: "high" | "medium" | "low";
     status: "resolved" | "verified" | "unverified" | "assigning" | "assigned";
@@ -41,6 +42,7 @@ const ReportSchema = new Schema<IReport>({
     image: { type: String },
     upvotes: { type: Number, default: 0 },
     downvotes: { type: Number, default: 0 },
+    votedBy: [{ type: String }], // Array of sessionIds who have voted
     duplicates: { type: Number, default: 0 },
     severity: { type: String, enum: ["high", "medium", "low"], default: "low" },
     status: { type: String, enum: ["resolved", "verified", "unverified", "assigning", "assigned"], default: "unverified" },

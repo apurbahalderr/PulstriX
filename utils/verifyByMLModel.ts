@@ -62,7 +62,7 @@ export default async function verifyByMLModel(
 
     const updateData: any = {
         severity: verifiedSeverity,
-        type: verifiedType,
+        type: type,
         status: "assigning"
     };
 
