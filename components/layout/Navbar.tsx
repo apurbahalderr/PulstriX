@@ -131,11 +131,11 @@ export function Navbar() {
                     </div>
                 )}
             </div>
-            
+
             {/* Mobile Floating Notification Button */}
             <div className="md:hidden">
-                <NotificationManager 
-                    className="fixed bottom-6 right-6 z-50 shadow-xl rounded-full"
+                <NotificationManager
+                    className="fixed bottom-6 right-6 z-[100] shadow-xl rounded-full"
                     variant="primary"
                 />
             </div>

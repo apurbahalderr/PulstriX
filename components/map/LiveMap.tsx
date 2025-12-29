@@ -37,7 +37,17 @@ const severityIcons: Record<string, L.DivIcon> = {
     low: createCustomIcon('#22C55E'), // green
 };
 
-const employeeIcon = createCustomIcon('#3B82F6'); // blue for employee
+const employeeIcon = L.divIcon({
+    className: 'custom-car-icon',
+    html: `<div style="background-color: #3B82F6; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18">
+                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-2.5 4c-.9.3-1.5 1.1-1.5 1.9v3c0 .6.4 1 1 1h2c0 1.1.9 2 2 2s2-.9 2-2h8c0 1.1.9 2 2 2s2-.9 2-2zm-12 1c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm10 0c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"/>
+            </svg>
+           </div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16]
+});
 
 // Component to handle map clicks
 function MapEvents({ onLocationSelect }: { onLocationSelect?: (lat: number, lng: number) => void }) {
@@ -62,7 +72,7 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
 
 interface LiveMapProps {
     incidents?: Report[];
-    employees?: User[]; // Add employees prop
+    employees?: any[]; // Add employees prop
     center?: [number, number];
     zoom?: number;
     interactive?: boolean;
@@ -70,6 +80,7 @@ interface LiveMapProps {
     selectedLocation?: [number, number] | null;
     className?: string;
     selectedIncident?: Report | null;
+    userLocation?: { lat: number; lng: number };
 }
 
 export default function LiveMap({
@@ -81,7 +92,8 @@ export default function LiveMap({
     onLocationSelect,
     selectedLocation,
     className = "h-full w-full rounded-lg",
-    selectedIncident
+    selectedIncident,
+    userLocation
 }: LiveMapProps) {
     // Fix for window is not defined during SSR
     const [mounted, setMounted] = useState(false);
@@ -136,6 +148,18 @@ export default function LiveMap({
                         position={selectedLocation}
                         icon={defaultIcon}
                     />
+                )}
+
+                {/* Render User Location */}
+                {userLocation && (
+                    <Marker
+                        position={[userLocation.lat, userLocation.lng]}
+                        icon={employeeIcon}
+                    >
+                        <Popup>
+                            <div className="text-gray-900 font-bold">You are here</div>
+                        </Popup>
+                    </Marker>
                 )}
 
                 {/* Render Employees */}

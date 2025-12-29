@@ -235,7 +235,7 @@ export default function DashboardPage() {
                 />
 
                 {/* Map Overlay Controls could go here */}
-                <div className="absolute top-4 right-4 z-[400] flex flex-col gap-2">
+                <div className="absolute top-4 right-4 z-400 flex flex-col gap-2">
                     {/* Example: Filter buttons or Legend */}
                 </div>
             </div>

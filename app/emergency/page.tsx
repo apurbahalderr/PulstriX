@@ -85,7 +85,7 @@ export default function EmergencyToolsPage() {
   return (
     <div className="min-h-screen bg-bg-main p-4 md:p-8">
       {flashlightOn && (
-        <div className="fixed inset-0 z-[100] bg-white flex items-center justify-center">
+        <div className="fixed inset-0 z-100 bg-white flex items-center justify-center">
           <button onClick={() => setFlashlightOn(false)} className="px-8 py-4 bg-black text-white rounded-full font-bold text-xl shadow-lg">
             TAP TO TURN OFF
           </button>
