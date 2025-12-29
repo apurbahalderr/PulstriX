@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserRole } from '@/types';
+import { setSessionId } from '@/utils/setSessionId';
 
 interface AuthContextType {
     user: User | null;
@@ -17,7 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Check local storage on mount
+        setSessionId();
         const storedUser = localStorage.getItem('pulstrix_user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));

@@ -13,7 +13,6 @@ export default function SOSButton({ onSOS, loading = false }: SOSButtonProps) {
 
     return (
         <div className="relative group">
-            {/* Ripple/Glow Effect */}
             <div
                 className={`absolute inset-0 bg-alert-critical rounded-full blur-xl opacity-20 transition-all duration-500 ${isHovered ? 'scale-125 opacity-40' : 'animate-pulse'}`}
             />

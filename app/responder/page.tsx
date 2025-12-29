@@ -26,21 +26,21 @@ export default function ResponderPage() {
     const { user, isLoading } = useAuth();
     const router = useRouter();
 
-    // State
+    
     const [incidents, setIncidents] = useState<Report[]>([]);
     const [employees, setEmployees] = useState<any[]>([]);
     const [showEmployees, setShowEmployees] = useState(false);
     const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
     const [isAddingEmployee, setIsAddingEmployee] = useState(false);
 
-    // Redirect if not responder
+    
     useEffect(() => {
         if (!isLoading && (!user || user.role !== 'responder')) {
             router.push('/login');
         }
     }, [user, isLoading, router]);
 
-    // Fetch Incidents for Stats
+    
     useEffect(() => {
         const fetchIncidents = async () => {
             try {
@@ -59,7 +59,7 @@ export default function ResponderPage() {
         fetchIncidents();
     }, []);
 
-    // Fetch Employees
+    
     const fetchEmployees = async () => {
         if (!user?._id) return;
         try {
@@ -94,7 +94,7 @@ export default function ResponderPage() {
             if (data.success) {
                 alert('Employee added successfully!');
                 setNewEmployeeEmail('');
-                fetchEmployees(); // Refresh list
+                fetchEmployees(); 
             } else {
                 alert(data.message || 'Failed to add employee');
             }
@@ -107,7 +107,7 @@ export default function ResponderPage() {
 
     if (isLoading || !user) return <div className="min-h-screen bg-bg-main pt-24 flex items-center justify-center text-white">Loading...</div>;
 
-    // Calculate Stats
+    
     const resolvedCount = incidents.filter(inc => {
         const lastResponderId = inc.responderId && inc.responderId.length > 0 
             ? inc.responderId[inc.responderId.length - 1] 
@@ -132,7 +132,7 @@ export default function ResponderPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-8 pt-6">
-                    {/* Profile Info */}
+                    {}
                     <div className="flex flex-col items-center space-y-3">
                         <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary border-2 border-primary/20">
                             <span className="text-3xl font-bold">{user.name.charAt(0).toUpperCase()}</span>
@@ -158,7 +158,7 @@ export default function ResponderPage() {
                         </div>
                     </div>
 
-                    {/* Stats */}
+                    {}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="bg-bg-main p-6 rounded-xl border border-border-main text-center hover:border-status-resolved/50 transition-colors">
                             <div className="text-4xl font-bold text-status-resolved mb-1">{resolvedCount}</div>
@@ -170,7 +170,7 @@ export default function ResponderPage() {
                         </div>
                     </div>
 
-                    {/* Team Management */}
+                    {}
                     <div className="space-y-4 pt-4 border-t border-border-main">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function ResponderPage() {
                             </h3>
                         </div>
 
-                        {/* Add Employee */}
+                        {}
                         <div className="bg-bg-main p-4 rounded-lg border border-border-main">
                             <label className="text-sm text-text-secondary mb-2 block">Add New Team Member</label>
                             <form onSubmit={handleAddEmployee} className="flex gap-2">
@@ -195,7 +195,7 @@ export default function ResponderPage() {
                             </form>
                         </div>
 
-                        {/* View Employees Toggle */}
+                        {}
                         <Button
                             variant="outline"
                             className="w-full justify-between"
@@ -208,7 +208,7 @@ export default function ResponderPage() {
                             {showEmployees ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </Button>
 
-                        {/* Employee List */}
+                        {}
                         {showEmployees && (
                             <div className="space-y-2 animate-in slide-in-from-top-2 max-h-60 overflow-y-auto pr-1 custom-scrollbar">
                                 {employees.length === 0 ? (

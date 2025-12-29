@@ -4,6 +4,7 @@ import ApiResponse from "@/utils/ApiResopnse";
 import { dbConnect } from "@/utils/dbConnect";
 import { NextResponse, type NextRequest } from "next/server";
 import z from "zod"
+import { sendNotification } from "@/utils/sendNotification";
 
 const assignSchema = z.object({
     responderId: z.string(),
@@ -14,12 +15,12 @@ const assignSchema = z.object({
 export async function POST(req: NextRequest) {
     console.log("Assigned");
     const body = await req.json();
-    //pehle se hi assign ho chuka h kya check karna h
-    //agar nahi h to responder ke employees me add karna h jo responder hi assign krega
-    //fir wo employee accept krega ya reject
-    //agar accept kiya to employee ka status update karna h aur report ka bhi status update karna h
-    //agar reject kiya to dusre idle employee ko kaam assign hoga jo us responder ke under aata h aur report me bhi update hoga ki kisko kaam assign hua h
-    //fir wahi process repeat hoga
+    
+    
+    
+    
+    
+    
     const parsedBody = assignSchema.safeParse(body);
     if (!parsedBody.success) {
         console.log("Invalid inputs for assignment")
@@ -51,6 +52,14 @@ export async function POST(req: NextRequest) {
                 )
             }
 
+            // Notify Employee
+            sendNotification({
+                title: "New Task Assigned",
+                message: "You have been assigned a new incident report. Please check your dashboard.",
+                url: "/employee",
+                userId: employeeId
+            }).catch(err => console.error("Failed to notify employee", err));
+
             return NextResponse.json(
                 new ApiResponse(true, "Employee assigned successfully"), { status: 200 }
             )
@@ -71,9 +80,8 @@ export async function POST(req: NextRequest) {
 }
 
 
-//report object for severity level
-// type report = {
-//     "description": "string",
-//     "image": "string",
-//     "type": "fire" | "roadAccident" | "medical" | "crime" | "disaster" | "infrastructureCollapse" | "other",
-// } iska return format me type hoga aur severity level hoga "low" | "medium" | "high"
+
+
+
+
+

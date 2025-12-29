@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Find employees by email
+        
         const employees = await Employee.find({ email: { $in: emails } });
         
         if (employees.length === 0) {

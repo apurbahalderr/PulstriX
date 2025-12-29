@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IOverAllReport extends Document {
-    medical: string[]; //ids of reports
+    medical: string[];
     roadAccident: string[];
     fire: string[];
     infrastructureCollapse: string[];

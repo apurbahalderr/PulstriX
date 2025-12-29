@@ -26,7 +26,6 @@ const LiveMap = dynamic(() => import('@/components/map/LiveMap'), {
     ssr: false
 });
 
-//TODO: the forwarding of report not done yett and also filter
 export default function ResponderDashboard() {
     const { user } = useAuth();
     const [incidents, setIncidents] = useState<Report[]>([]);
@@ -34,22 +33,19 @@ export default function ResponderDashboard() {
     const [selectedIncident, setSelectedIncident] = useState<Report | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [showAssignModal, setShowAssignModal] = useState(false);
+    const [isForwarding, setIsForwarding] = useState(false);
 
-    // Mock ID for demo if no real auth
     const responderId = user?._id || user?.id || 'r1';
 
     const fetchData = async () => {
         try {
-            // Fetch reports
             const repRes = await fetch('/api/report');
             const repData = await repRes.json();
             if (repData.success) {
                 setIncidents(repData.data);
             }
 
-            // Fetch ALL employees to track both idle and assigned
             if (user?.role === 'responder' || user?.role === 'employee') {
-                // Use the route that returns ALL employees for this responder
                 const empRes = await fetch(`/api/responder/employees?responderId=${responderId}`);
                 const empData = await empRes.json();
                 if (empData.success) {
@@ -65,13 +61,12 @@ export default function ResponderDashboard() {
 
     useEffect(() => {
         fetchData();
-        const interval = setInterval(fetchData, 10000); // Poll every 10s for live updates
+        const interval = setInterval(fetchData, 10000);
         return () => clearInterval(interval);
     }, [user, responderId]);
 
     const handleVote = async (e: React.MouseEvent, id: string, action: 'upvote' | 'downvote') => {
         e.stopPropagation();
-        // Implement vote logic if needed, or remove if dashboard is read-only for voting
     };
 
     const handleAssign = async (employeeId: string) => {
@@ -91,13 +86,46 @@ export default function ResponderDashboard() {
             if (data.success) {
                 alert("Unit Assigned!");
                 fetchData();
-                setSelectedIncident(null); // Clear selection or keep open? Clearing seems safer to avoid stale state.
+                setSelectedIncident(null);
             } else {
                 alert("Failed: " + data.message);
             }
         } catch (e) {
             console.error(e);
             alert("Error assigning unit");
+        }
+    };
+
+    const handleForward = async () => {
+        if (!selectedIncident || !user?._id) return;
+
+        setIsForwarding(true);
+        try {
+            const response = await fetch('/api/forwardReportToAnotherResponder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    reportId: selectedIncident._id,
+                    responderId: user._id
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Report forwarded successfully!');
+                setSelectedIncident(null);
+                setShowAssignModal(false);
+                fetchData();
+            } else {
+                alert(data.message || 'Failed to forward report');
+            }
+        } catch (error) {
+            console.error('Error forwarding report:', error);
+            alert('Failed to forward report');
+        } finally {
+            setIsForwarding(false);
         }
     };
 
@@ -152,7 +180,6 @@ export default function ResponderDashboard() {
 
             <div className="flex-1 flex overflow-hidden max-w-[1600px] w-full mx-auto px-4 md:px-8 pb-4 gap-6">
 
-                {/* LEFT PANEL: Report List */}
                 <div className="w-1/3 min-w-[350px] flex flex-col bg-bg-card border border-border-main rounded-xl overflow-hidden shadow-lg">
                     <div className="p-4 border-b border-border-main bg-bg-secondary/30 flex items-center justify-between">
                         <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -173,19 +200,16 @@ export default function ResponderDashboard() {
                                     <IncidentCard
                                         incident={incident}
                                         onClick={(e, inc) => setSelectedIncident(inc)}
-                                        onVote={() => { }} // Disable voting from this view to simplify
+                                        onVote={() => { }}
                                     />
-                                    {/* Overlay for selected state visual cue if needed */}
                                 </div>
                             ))
                         )}
                     </div>
                 </div>
 
-                {/* RIGHT PANEL: Workspace */}
                 <div className="flex-1 flex flex-col gap-6 overflow-hidden">
 
-                    {/* Top: Selected Incident Details */}
                     <div className="flex-[2] bg-bg-card border border-border-main rounded-xl overflow-hidden shadow-lg flex flex-col relative">
                         {!selectedIncident ? (
                             <div className="absolute inset-0 flex flex-col items-center justify-center text-text-muted bg-bg-secondary/10">
@@ -194,7 +218,6 @@ export default function ResponderDashboard() {
                             </div>
                         ) : (
                             <div className="flex flex-col h-full">
-                                {/* Header */}
                                 <div className="p-4 border-b border-border-main bg-bg-secondary/30 flex justify-between items-start">
                                     <div>
                                         <div className="flex items-center gap-2 mb-1">
@@ -206,7 +229,6 @@ export default function ResponderDashboard() {
                                             <span className="flex items-center gap-1"><MapPin size={14} /> Lat: {selectedIncident.location.lat.toFixed(4)}, Lng: {selectedIncident.location.lng.toFixed(4)}</span>
                                         </div>
                                     </div>
-                                    {/* Status Controls */}
                                     <div className="flex gap-4">
                                         <div className='relative'>
                                         <Button
@@ -226,9 +248,12 @@ export default function ResponderDashboard() {
                                                         setShowAssignModal(false);
                                                     }}
                                                     onClose={() => setShowAssignModal(false)}
+                                                    onForward={handleForward}
+                                                    isForwarding={isForwarding}
                                                 />
                                             )}
                                         </div>
+                                                
                                         
                                     </div>
                                     <div>
@@ -260,9 +285,7 @@ export default function ResponderDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Content: Image + Description */}
                                 <div className="flex-1 overflow-y-auto p-4 flex gap-6">
-                                    {/* Image */}
                                     <div className="w-1/2 bg-black/20 rounded-lg overflow-hidden border border-border-main flex items-center justify-center min-h-50">
                                         {selectedIncident.image ? (
                                             <img
@@ -279,7 +302,6 @@ export default function ResponderDashboard() {
                                         )}
                                     </div>
 
-                                    {/* Detailed Stats / Desc */}
                                     <div className="flex-1 space-y-4">
                                         <div className="bg-bg-main p-4 rounded-lg border border-border-main">
                                             <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-2">Description</h3>
@@ -305,7 +327,6 @@ export default function ResponderDashboard() {
                     </div>
 
 
-                    {/* Middle: Live Map (Only if incident selected) */}
                     {selectedIncident && (
                         <div className="flex-[3] bg-bg-card border border-border-main rounded-xl overflow-hidden shadow-lg flex flex-col min-h-[450px] relative">
                             <div className="absolute top-2 left-2 z-[400] bg-bg-card/90 backdrop-blur px-3 py-1 rounded text-xs font-bold text-text-primary border border-border-main shadow-sm flex items-center gap-2">
@@ -337,9 +358,6 @@ export default function ResponderDashboard() {
                             />
                         </div>
                     )}
-
-                    {/* Bottom: Idle Employees Assignment */}
-                    
 
                 </div>
             </div>

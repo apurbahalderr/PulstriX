@@ -40,7 +40,6 @@ export default function Home() {
 
       <HowItWorks />
 
-      {/* Features Section */}
       <div id="features" className="py-24 bg-bg-main">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">

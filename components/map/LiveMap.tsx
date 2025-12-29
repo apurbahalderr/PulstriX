@@ -6,12 +6,12 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Report, User } from '@/types';
 
-// Fix Leaflet default icon issue in Next.js
+
 const iconUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png';
 const iconRetinaUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png';
 const shadowUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png';
 
-// Define custom icons based on incident type/status if needed
+
 const defaultIcon = L.icon({
     iconUrl,
     iconRetinaUrl,
@@ -22,7 +22,7 @@ const defaultIcon = L.icon({
     shadowSize: [41, 41]
 });
 
-// Create simple colored circle icons for severity levels
+
 const createCustomIcon = (color: string) =>
     L.divIcon({
         className: 'custom-pin',
@@ -32,9 +32,9 @@ const createCustomIcon = (color: string) =>
     });
 
 const severityIcons: Record<string, L.DivIcon> = {
-    high: createCustomIcon('#EF4444'), // red
-    medium: createCustomIcon('#F97316'), // orange
-    low: createCustomIcon('#22C55E'), // green
+    high: createCustomIcon('#EF4444'), 
+    medium: createCustomIcon('#F97316'), 
+    low: createCustomIcon('#22C55E'), 
 };
 
 const employeeIcon = L.divIcon({
@@ -49,7 +49,7 @@ const employeeIcon = L.divIcon({
     popupAnchor: [0, -16]
 });
 
-// Component to handle map clicks
+
 function MapEvents({ onLocationSelect }: { onLocationSelect?: (lat: number, lng: number) => void }) {
     useMapEvents({
         click(e) {
@@ -61,7 +61,7 @@ function MapEvents({ onLocationSelect }: { onLocationSelect?: (lat: number, lng:
     return null;
 }
 
-// Component to update map view when center changes
+
 function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }) {
     const map = useMap();
     useEffect(() => {
@@ -72,7 +72,7 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
 
 interface LiveMapProps {
     incidents?: Report[];
-    employees?: any[]; // Add employees prop
+    employees?: any[]; 
     center?: [number, number];
     zoom?: number;
     interactive?: boolean;
@@ -85,7 +85,7 @@ interface LiveMapProps {
 
 export default function LiveMap({
     incidents = [],
-    employees = [], // specific employees to show (e.g. idle ones)
+    employees = [], 
     center = [20.2961, 85.8245],
     zoom = 13,
     interactive = true,
@@ -95,7 +95,7 @@ export default function LiveMap({
     selectedIncident,
     userLocation
 }: LiveMapProps) {
-    // Fix for window is not defined during SSR
+    
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -118,10 +118,10 @@ export default function LiveMap({
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    className="map-tiles-dark" // We can try to filter this with CSS
+                    className="map-tiles-dark" 
                 />
 
-                {/* Render Incidents */}
+                {}
                 {incidents.map((incident) => {
                     const sevKey = (incident.severity || '').toString().toLowerCase();
                     const icon = severityIcons[sevKey] || defaultIcon;
@@ -142,7 +142,7 @@ export default function LiveMap({
                     );
                 })}
 
-                {/* Render Selected Location (for Reporting) */}
+                {}
                 {selectedLocation && (
                     <Marker
                         position={selectedLocation}
@@ -150,7 +150,7 @@ export default function LiveMap({
                     />
                 )}
 
-                {/* Render User Location */}
+                {}
                 {userLocation && (
                     <Marker
                         position={[userLocation.lat, userLocation.lng]}
@@ -162,7 +162,7 @@ export default function LiveMap({
                     </Marker>
                 )}
 
-                {/* Render Employees */}
+                {}
                 {employees.map((emp) => {
                     if (!emp.location) return null;
                     return (
@@ -182,9 +182,7 @@ export default function LiveMap({
                     );
                 })}
 
-                {/* Render Selected Incident Employee (if any) - override if already in list? 
-                    Reuse filtering if needed, but for now showing specific path is useful 
-                 */}
+                {}
                 {selectedIncident && selectedIncident.employeeLocation && (
                     <>
                         <Marker
@@ -212,7 +210,7 @@ export default function LiveMap({
         .leaflet-container {
           background: #151A21;
         }
-        /* Dark mode filter for map tiles */
+        
         .leaflet-tile {
           filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
         }

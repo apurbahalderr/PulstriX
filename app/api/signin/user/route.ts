@@ -12,7 +12,7 @@ const loginSchema = z.object({
     sessionId: z.string(),
 })
 
-//normal user ka sign in yaha par hoga
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json()

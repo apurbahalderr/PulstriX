@@ -11,7 +11,7 @@ def within_time_window(old_time: datetime, new_time: datetime) -> bool:
 
 
 def haversine_distance(lat1, lon1, lat2, lon2) -> float:
-    R = 6371  # Earth radius in km
+    R = 6371  
 
     d_lat = math.radians(lat2 - lat1)
     d_lon = math.radians(lon2 - lon1)
@@ -36,11 +36,11 @@ def filter_recent_incidents(
     filtered = []
 
     for incident in past_incidents:
-        # 1️⃣ Time filter
+        
         if not within_time_window(incident["timestamp"], new_time):
             continue
 
-        # 2️⃣ Geo-based filtering
+        
         if "latitude" in new_incident and "longitude" in new_incident:
             if "latitude" not in incident or "longitude" not in incident:
                 continue
@@ -55,7 +55,7 @@ def filter_recent_incidents(
             if distance <= GEO_RADIUS_KM:
                 filtered.append(incident)
 
-        # 3️⃣ Area-based filtering
+        
         elif "area_id" in new_incident:
             if incident.get("area_id") == new_incident["area_id"]:
                 filtered.append(incident)

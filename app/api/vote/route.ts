@@ -22,7 +22,6 @@ export async function POST(req: Request) {
             );
         }
 
-        // Check if report exists first
         const report = await Report.findById(reportId);
         if (!report) {
             return NextResponse.json(
@@ -31,7 +30,6 @@ export async function POST(req: Request) {
             );
         }
 
-        // Check if user already voted
         if (report.votedBy && report.votedBy.includes(sessionId)) {
             return NextResponse.json(
                 { success: false, error: "You have already voted on this report" },
@@ -46,7 +44,7 @@ export async function POST(req: Request) {
         const updatedReport = await Report.findByIdAndUpdate(
             reportId,
             update,
-            { new: true } // Return the updated document
+            { new: true }
         );
 
         return NextResponse.json({

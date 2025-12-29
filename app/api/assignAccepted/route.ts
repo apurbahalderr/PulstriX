@@ -3,6 +3,7 @@ import { Report } from "@/models/report.model";
 import ApiResponse from "@/utils/ApiResopnse";
 import { dbConnect } from "@/utils/dbConnect";
 import { NextResponse, type NextRequest } from "next/server";
+import { sendNotification } from "@/utils/sendNotification";
 
 export async function POST(req: NextRequest){
     console.log("Assign accepted/rejected");
@@ -20,26 +21,48 @@ export async function POST(req: NextRequest){
         }
         
         if(action === "accepted"){
-            // Update report status
+            
             report.status = "assigned";
             await report.save();
             
-            // Update employee status to busy
+            
             await Employee.findByIdAndUpdate(employeeId, {
                 status: "busy"
             });
             
+            // Notify User (Reporter)
+            if (report.userId) {
+                sendNotification({
+                    title: "Help is on the way!",
+                    message: "An employee has accepted your report and is responding.",
+                    url: `/report?id=${reportId}`,
+                    userId: report.userId
+                }).catch(err => console.error("Failed to notify user", err));
+            }
+
+            // Notify Responder
+            if (report.responderId && report.responderId.length > 0) {
+                report.responderId.forEach((respId: string) => {
+                    sendNotification({
+                        title: "Employee Accepted Task",
+                        message: `Employee has accepted the assignment for report ${report.type}.`,
+                        url: "/responder/dashboard",
+                        userId: respId
+                    }).catch(err => console.error("Failed to notify responder", err));
+                });
+            }
+
             return NextResponse.json(
                 new ApiResponse(true, "Report assignment accepted"), { status: 200 }
             )
         } else if(action === "rejected" || action === "passed"){
-            // Clear current employee's assignment
+            
             await Employee.findByIdAndUpdate(employeeId, {
                 reportIdAssigned: undefined,
                 status: "idle"
             });
             
-            // Get responder ID from report (first responder in array)
+            
             const responderId = report.responderId && report.responderId.length > 0 
                 ? report.responderId[0] 
                 : null;
@@ -50,7 +73,7 @@ export async function POST(req: NextRequest){
                 )
             }
             
-            // Find another idle employee from the same responder and department
+            
             const employees = await Employee.find({
                 department: report.type, 
                 responder: responderId, 
@@ -60,7 +83,7 @@ export async function POST(req: NextRequest){
             });
             
             if(employees.length === 0){
-                // No more employees available, reset report status
+                
                 report.status = "verified";
                 await report.save();
                 return NextResponse.json(
@@ -68,7 +91,7 @@ export async function POST(req: NextRequest){
                 )
             }
     
-            // Assign to new employee
+            
             const newEmployee = employees[0];
             if (!report.employeeId.includes(newEmployee._id.toString())) {
                 report.employeeId.push(newEmployee._id.toString());

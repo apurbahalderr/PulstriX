@@ -30,7 +30,7 @@ def test_first_incident_not_duplicate():
 
 
 def test_similar_incident_duplicate():
-    # First incident
+    
     client.post(
         "/incident",
         json={
@@ -40,7 +40,7 @@ def test_similar_incident_duplicate():
         }
     )
 
-    # Second incident — EXACT SAME TEXT
+    
     response = client.post(
         "/incident",
         json={
@@ -55,7 +55,7 @@ def test_similar_incident_duplicate():
 
 
 def test_different_area_not_duplicate():
-    # First incident
+    
     client.post(
         "/incident",
         json={
@@ -65,7 +65,7 @@ def test_different_area_not_duplicate():
         }
     )
 
-    # Same type of incident, different area
+    
     response = client.post(
         "/incident",
         json={

@@ -28,9 +28,9 @@ app = FastAPI(
 @app.post("/deduplicate-image", response_model=DeduplicationResponse)
 def deduplicate_image(request: DeduplicationRequest):
 
-    # -------------------------------
-    # Encode NEW image (critical)
-    # -------------------------------
+    
+    
+    
     try:
         new_embedding = encode_image_from_url(
             request.new_image.image_url
@@ -43,9 +43,9 @@ def deduplicate_image(request: DeduplicationRequest):
 
     image_matches: List[ImageMatch] = []
 
-    # -------------------------------
-    # Process each candidate safely
-    # -------------------------------
+    
+    
+    
     for candidate in request.candidate_images:
         try:
             candidate_embedding = encode_image_from_url(
@@ -87,7 +87,7 @@ def deduplicate_image(request: DeduplicationRequest):
             )
 
         except Exception as e:
-            # Candidate failed → mark it safely
+            
             image_matches.append(
                 ImageMatch(
                     image_id=candidate.image_id,

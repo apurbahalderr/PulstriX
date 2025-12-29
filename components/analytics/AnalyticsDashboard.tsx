@@ -6,13 +6,13 @@ import { AnalyticsCharts } from './Charts';
 import { RefreshCw } from 'lucide-react';
 
 export function AnalyticsDashboard() {
-    // --- Mock Data States ---
+    
     const [pieData, setPieData] = useState([
-        { name: 'Medical', value: 400, color: '#ef4444' }, // Red
-        { name: 'Fire', value: 300, color: '#f97316' },    // Orange
-        { name: 'Traffic', value: 300, color: '#eab308' }, // Yellow
-        { name: 'Crime', value: 200, color: '#3b82f6' },   // Blue
-        { name: 'Disaster', value: 100, color: '#a855f7' }, // Purple
+        { name: 'Medical', value: 400, color: '#ef4444' }, 
+        { name: 'Fire', value: 300, color: '#f97316' },    
+        { name: 'Traffic', value: 300, color: '#eab308' }, 
+        { name: 'Crime', value: 200, color: '#3b82f6' },   
+        { name: 'Disaster', value: 100, color: '#a855f7' }, 
     ]);
 
     const [lineData, setLineData] = useState([
@@ -36,12 +36,12 @@ export function AnalyticsDashboard() {
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    // --- Data Polling Simulation ---
+    
     const refreshData = () => {
         setIsRefreshing(true);
-        // Simulate fetching
+        
         setTimeout(() => {
-            // Randomize data slightly to show "live" updates
+            
             const newPie = pieData.map(item => ({ ...item, value: Math.max(0, item.value + Math.floor(Math.random() * 50 - 25)) }));
             const newLine = lineData.map(item => ({
                 ...item,
@@ -57,20 +57,20 @@ export function AnalyticsDashboard() {
     };
 
     useEffect(() => {
-        // Poll every 30 seconds
+        
         const interval = setInterval(refreshData, 30000);
         return () => clearInterval(interval);
-    }, [pieData, lineData]); // Deps ensure we update based on previous state if we were using it, but here we just mocked it simpler
+    }, [pieData, lineData]); 
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header */}
-            {/* Header */}
+            {}
+            {}
             <div className="relative overflow-hidden rounded-3xl p-8 mb-8 border border-blue-500/30 shadow-[0_0_50px_rgba(30,58,138,0.3)] group">
-                {/* Glass Background */}
+                {}
                 <div className="absolute inset-0 bg-blue-950/40 backdrop-blur-xl"></div>
 
-                {/* Ambient Light/Shine */}
+                {}
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-transparent pointer-events-none"></div>
                 <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-500/20 rounded-full blur-[100px] animate-pulse"></div>
 
@@ -106,10 +106,10 @@ export function AnalyticsDashboard() {
                 </div>
             </div>
 
-            {/* Stats Cards */}
+            {}
             <StatsCards />
 
-            {/* Charts Section */}
+            {}
             <AnalyticsCharts pieData={pieData} lineData={lineData} barData={barData} />
 
         </div>

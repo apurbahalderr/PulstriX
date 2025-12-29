@@ -1,16 +1,16 @@
 import { ReportSeverity, ReportStatus, MapPin } from '@/types';
-// Adjusted PinType to MapPin.type if needed, or just keep string literals if PinType was removed.
-// In types/index.ts I defined MapPin but not PinType alias explicitly. 
-// I will check types/index.ts again. I defined: export type MapPin = { ... type: ReportSeverity | 'verified'; }
-// So I should probably just use the string values or re-export PinType or define it here.
-// For now, I'll use string literals or assume PinType is replaced by ReportSeverity | string.
+
+
+
+
+
 
 interface BadgeProps {
     children: React.ReactNode;
     variant?: 'default' | 'outline' | 'solid';
     status?: ReportStatus;
     priority?: ReportSeverity;
-    pinType?: string; // Relaxed type
+    pinType?: string; 
     className?: string;
 }
 
@@ -25,7 +25,7 @@ export function Badge({
     let colorClass = 'bg-bg-secondary text-text-secondary';
     let borderClass = 'border-border-main';
 
-    // Determine color based on props precedence
+    
     if (priority === 'high') {
         colorClass = 'bg-alert-high/20 text-alert-high border-alert-high/30';
     } else if (priority === 'medium') {

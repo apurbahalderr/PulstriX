@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
         await dbConnect();
 
-        // Fetch all employees assigned to this responder
+        
         const employees = await Employee.find({ responder: responderId });
 
         return NextResponse.json(

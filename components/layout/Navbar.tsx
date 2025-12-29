@@ -17,29 +17,49 @@ export function Navbar() {
 
     const isActive = (path: string) => pathname === path;
 
-    const navLinks = [
-        { href: '/', label: 'Home', public: true },
-        { href: '/dashboard', label: 'Dashboard', public: true }, // Dashboard public for all according to rules
-        { href: '/report', label: 'Report', public: true },
-        { href: '/emergency', label: 'Emergency', public: true },
-        { href: '/analytics', label: 'Analytics', public: false }, // Logged in only
-    ];
+    const getNavLinks = () => {
+        if (user?.role === 'responder') {
+            return [
+                { href: '/responder/dashboard', label: 'Dashboard' },
+                { href: '/responder', label: 'Manage' },
+            ];
+        }
+        if (user?.role === 'employee') {
+            return [
+                { href: '/employee', label: 'My Tasks' },
+            ];
+        }
+        
+        
+        const links = [
+            { href: '/', label: 'Home' },
+            { href: '/dashboard', label: 'Dashboard' },
+            { href: '/report', label: 'Report' },
+            { href: '/emergency', label: 'Emergency' },
+        ];
 
-    const visibleLinks = navLinks.filter(link => link.public || user);
+        if (user) {
+            links.push({ href: '/analytics', label: 'Analytics' });
+        }
+        
+        return links;
+    };
+
+    const navLinks = getNavLinks();
 
     return (
         <nav className="fixed top-4 left-0 right-0 z-50 max-w-[95%] mx-auto px-2 sm:px-4 lg:px-6">
             <div className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
                 <div className="flex items-center justify-between h-16 px-6 md:px-12">
-                    {/* Logo */}
+                    {}
                     <Link href="/" className="flex items-center space-x-2">
                         <Image src="/logo.jpeg" alt="Pulstrix Logo" width={32} height={32} className="object-contain rounded" />
                         <span className="text-xl font-bold tracking-tight text-white">Pulstri<span style={{ color: '#007BFF' }}>X</span></span>
                     </Link>
 
-                    {/* Desktop Nav */}
+                    {}
                     <div className="hidden md:flex items-center space-x-4">
-                        {visibleLinks.map((link) => (
+                        {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
@@ -53,7 +73,7 @@ export function Navbar() {
                         ))}
                     </div>
 
-                    {/* Auth Actions */}
+                    {}
                     <div className="hidden md:flex items-center space-x-3">
                         <NotificationManager variant="outline" className="border-primary/30 text-primary hover:bg-primary/10" />
                         {user ? (
@@ -81,7 +101,7 @@ export function Navbar() {
                         )}
                     </div>
 
-                    {/* Mobile menu button */}
+                    {}
                     <div className="md:hidden">
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -91,11 +111,11 @@ export function Navbar() {
                         </button>
                     </div>
                 </div>
-                {/* Mobile Menu */}
+                {}
                 {isMenuOpen && (
                     <div className="md:hidden border-t border-white/10">
                         <div className="px-2 pt-2 pb-3 space-y-1">
-                            {visibleLinks.map((link) => (
+                            {navLinks.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
@@ -132,7 +152,7 @@ export function Navbar() {
                 )}
             </div>
 
-            {/* Mobile Floating Notification Button */}
+            {}
             <div className="md:hidden">
                 <NotificationManager
                     className="fixed bottom-6 right-6 z-[100] shadow-xl rounded-full"

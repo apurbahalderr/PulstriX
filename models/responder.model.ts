@@ -1,14 +1,15 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { Department } from "@/types";
 
 export interface IResponder extends Document {
     name: string;
     email: string;
     phone: number;
     role: "responder";
-    department: string;
+    department: Department;
     location: { lat: number, lng: number };
     address: string;
-    employees?: string[] //sare employees ka id hoga jo is responder se juda hua h
+    employees?: string[]
 }
 
 const ResponderSchema = new Schema<IResponder>({
@@ -16,7 +17,20 @@ const ResponderSchema = new Schema<IResponder>({
     email: {type: String, required: true, unique: true},
     phone: {type: Number, required: true},
     role: {type: String, enum: ["responder"], default: "responder"},
-    department: {type: String, required: true},
+    department: {
+        type: String, 
+        required: true,
+        enum: [
+            "Fire Department",
+            "Traffic Police",
+            "Health Department",
+            "Police Department",
+            "Disaster Management",
+            "Public Works Department",
+            "General",
+            "Emergency Response"
+        ]
+    },
     location: {
         lat: { type: Number },
         lng: { type: Number }

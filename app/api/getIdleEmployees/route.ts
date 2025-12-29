@@ -8,13 +8,13 @@ export async function GET(req: NextRequest) {
     try {
         let responderId = "";
 
-        // Try getting from token
+        
         const res = await jwtDecode();
         if (res.success) {
             const { _id } = res.data as jwt.JwtPayload;
             responderId = _id;
         } else {
-            // Fallback to query param for demo/testing
+            
             const url = new URL(req.url);
             const queryId = url.searchParams.get("responderId");
             if (queryId) {

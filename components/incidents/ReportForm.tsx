@@ -34,14 +34,13 @@ export function ReportForm() {
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [mapCenter, setMapCenter] = useState<[number, number]>([20.2961, 85.8245]); // Default Bhubaneswar
+    const [mapCenter, setMapCenter] = useState<[number, number]>([20.2961, 85.8245]); 
 
     const incidentTypes: ReportType[] = [
         'Crime', 'Medical', 'Fire', 'Disaster', 'Infrastructure Collapse', 'Accident', 'Other', 'Emergency'
     ];
 
     useEffect(() => {
-        // Try to get initial location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -77,7 +76,6 @@ export function ReportForm() {
         );
     };
 
-    // Speech recognition (voice -> text) for description
     const startRecognition = () => {
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
         if (!SpeechRecognition) {
@@ -173,23 +171,20 @@ export function ReportForm() {
 
         setIsSearching(true);
         try {
-            // Using LocationIQ API
-            const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY || 'pk.5d609655555555555555555555555555'; // Replace with actual key or env var
-            // Note: If you don't have a key, this will fail. 
-            // Ideally: const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;
+            const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY || 'pk.5d609655555555555555555555555555'; 
+
 
             const response = await fetch(`https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(searchQuery)}&format=json`);
             const data = await response.json();
 
             if (Array.isArray(data) && data.length > 0) {
                 setSearchResults(data);
-                // Automatically select the first result
                 const firstResult = data[0];
                 const lat = parseFloat(firstResult.lat);
                 const lon = parseFloat(firstResult.lon);
                 setFormData(prev => ({ ...prev, location: [lat, lon] }));
                 setMapCenter([lat, lon]);
-                setSearchResults([]); // Clear results after selection or keep them to show a list
+                setSearchResults([]);
             } else {
                 alert("No results found");
             }
@@ -234,7 +229,7 @@ export function ReportForm() {
                 description: formData.description,
                 phone: formData.phone ? parseInt(formData.phone) : undefined,
                 image: imageUrl,
-                severity: "low" // Default
+                severity: "low" 
             };
 
             const response = await fetch('/api/report', {
@@ -294,7 +289,7 @@ export function ReportForm() {
             <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
 
-                    {/* Incident Type */}
+                    {}
                     <div>
                         <label className="block text-sm font-medium text-text-secondary mb-2">Incident Type</label>
                         <div className="grid grid-cols-2 gap-2">
@@ -314,7 +309,7 @@ export function ReportForm() {
                         </div>
                     </div>
 
-                    {/* Description */}
+                    {}
                     <div>
                         <label className="block text-sm font-medium text-text-secondary mb-2">Description</label>
                         <div className="relative">
@@ -343,13 +338,13 @@ export function ReportForm() {
                         </div>
                     </div>
 
-                    {/* Location Picker */}
+                    {}
                     <div>
                         <label className="block text-sm font-medium text-text-secondary mb-2">
                             Location <span className="text-text-muted font-normal">(Tap on map or search)</span>
                         </label>
 
-                        {/* Search and Geolocation Controls */}
+                        {}
                         <div className="flex gap-2 mb-2 relative z-20">
                             <div className="relative flex-1">
                                 <input
@@ -421,7 +416,7 @@ export function ReportForm() {
                         )}
                     </div>
 
-                    {/* Image & Phone */}
+                    {}
                     <div className="grid grid-cols-2 gap-4">
                         <Input
                             label="Phone Number"

@@ -33,7 +33,7 @@ export default function NotificationManager({ className, variant = "ghost" }: No
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
-      // Check if already subscribed
+      
       navigator.serviceWorker.ready.then(function (reg) {
         setRegistration(reg);
         reg.pushManager.getSubscription().then(function (sub) {
@@ -44,7 +44,7 @@ export default function NotificationManager({ className, variant = "ghost" }: No
         });
       });
 
-      // Register if not already
+      
       navigator.serviceWorker.register('/sw.js')
         .then(function (reg) {
           console.log('Service Worker Registered', reg);
@@ -55,6 +55,21 @@ export default function NotificationManager({ className, variant = "ghost" }: No
         });
     }
   }, []);
+
+  // Update subscription with user details when user changes
+  useEffect(() => {
+    if (isSubscribed && subscription && user) {
+      fetch('/api/notifications/subscribe', {
+        method: 'POST',
+        body: JSON.stringify({
+          subscription: subscription,
+          userId: user._id || user.id,
+          role: user.role
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      }).catch(err => console.error("Failed to update subscription user mapping", err));
+    }
+  }, [user, isSubscribed, subscription]);
 
   const subscribeUser = async () => {
     if (Notification.permission === 'denied') {
@@ -90,7 +105,11 @@ export default function NotificationManager({ className, variant = "ghost" }: No
 
       await fetch('/api/notifications/subscribe', {
         method: 'POST',
-        body: JSON.stringify(sub),
+        body: JSON.stringify({
+          subscription: sub,
+          userId: user?._id || user?.id,
+          role: user?.role
+        }),
         headers: { 'Content-Type': 'application/json' }
       });
 
@@ -108,17 +127,17 @@ export default function NotificationManager({ className, variant = "ghost" }: No
   }
 
   if (!user) return null;
-  // Previously returned null if subscribed. Now we show state.
+  
 
   return (
     <Button
       onClick={isSubscribed ? undefined : subscribeUser}
-      variant={isSubscribed ? "outline" : variant} // Show outline if active to be subtle
+      variant={isSubscribed ? "outline" : variant} 
       size="sm"
       className={`${className} ${isSubscribed ? 'opacity-70 cursor-default border-green-500/50 text-green-500' : ''}`}
       leftIcon={<Bell size={18} className={isSubscribed ? "fill-current" : ""} />}
       isLoading={isLoading}
-      disabled={isSubscribed} // Disable clicking if already on
+      disabled={isSubscribed} 
     >
       {isSubscribed ? 'Notifications On' : 'Enable Notifications'}
     </Button>

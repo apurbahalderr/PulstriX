@@ -12,16 +12,16 @@ app = FastAPI(
 )
 
 
-# -------------------------
-# Request Schema
-# -------------------------
+
+
+
 
 class PriorityRequest(BaseModel):
     incident_id: str
     incident_type: str
     description: str
 
-    # Accept either naming from backend
+    
     report_count: Optional[int] = None
     duplicates: Optional[int] = None
 
@@ -29,9 +29,9 @@ class PriorityRequest(BaseModel):
     time_since_report_minutes: int
 
 
-# -------------------------
-# Response Schema
-# -------------------------
+
+
+
 
 class PriorityResponse(BaseModel):
     incident_id: str
@@ -41,26 +41,26 @@ class PriorityResponse(BaseModel):
     method: Literal["HARD_RULE", "LLM"]
 
 
-# -------------------------
-# API Endpoint
-# -------------------------
+
+
+
 
 @app.post("/priority/classify", response_model=PriorityResponse)
 def classify_incident(payload: PriorityRequest):
     data = payload.dict()
 
-    # -------------------------
-    # 🔁 MAPPING LOGIC
-    # -------------------------
-    # Prefer report_count, fallback to duplicates
+    
+    
+    
+    
     if data.get("report_count") is None:
         data["report_count"] = data.get("duplicate", 1)
 
-    # Safety clamp (must be >= 1)
+    
     if data["report_count"] < 1:
         data["report_count"] = 1
 
-    # Remove duplicate key before ML (clean input)
+    
     data.pop("duplicate", None)
 
     result = classify_priority(data)

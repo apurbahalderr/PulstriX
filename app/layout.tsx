@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { RouteGuard } from "@/components/layout/RouteGuard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,13 +34,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <Navbar />
-          <main className="grow pt-24">
-            <PageTransition>
-              {children}
-            </PageTransition>
-          </main>
-          <Footer />
+          <RouteGuard>
+            <Navbar />
+            <main className="grow pt-24">
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </main>
+            <Footer />
+          </RouteGuard>
         </AuthProvider>
       </body>
     </html>

@@ -76,7 +76,7 @@ def test_response_schema():
 
     result = classify_priority(payload)
 
-    # Schema checks
+    
     assert "incident_id" in result
     assert "priority" in result
     assert "confidence" in result

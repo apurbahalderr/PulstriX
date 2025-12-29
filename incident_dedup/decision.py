@@ -13,7 +13,7 @@ def compute_final_score(
         0.1 * time_similarity
     )
 
-    # Rounded for clean output
+    
     return round(final_score, 3)
 
 

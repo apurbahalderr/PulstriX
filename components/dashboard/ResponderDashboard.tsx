@@ -33,6 +33,7 @@ export default function ResponderDashboard() {
     const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [assigning, setAssigning] = useState(false);
+    const [forwarding, setForwarding] = useState(false);
 
     const reportTypes = ['all', 'Crime', 'Medical', 'Fire', 'Accident', 'Disaster', 'Infrastructure Collapse', 'Other'];
 
@@ -82,7 +83,6 @@ export default function ResponderDashboard() {
     const handleAssign = async () => {
         if (!selectedReport || !selectedEmployee || !user?._id) {
             if (!user?._id) {
-                // Try to get from localStorage if _id is not available
                 const userStr = localStorage.getItem('pulstrix_user');
                 const storedUser = userStr ? JSON.parse(userStr) : null;
                 if (!storedUser?._id && !storedUser?.id) {
@@ -125,10 +125,41 @@ export default function ResponderDashboard() {
             setAssigning(false);
         }
     };
+const handleForward = async () => {
+        if (!selectedReport || !user?._id) return;
 
+        setForwarding(true);
+        try {
+            const response = await fetch('/api/forwardReportToAnotherResponder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    reportId: selectedReport._id,
+                    responderId: user._id
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Report forwarded successfully!');
+                setSelectedReport(null);
+                fetchReports();
+            } else {
+                alert(data.message || 'Failed to forward report');
+            }
+        } catch (error) {
+            console.error('Error forwarding report:', error);
+            alert('Failed to forward report');
+        } finally {
+            setForwarding(false);
+        }
+    };
+
+    
     return (
         <div className="h-[calc(100vh-64px)] relative flex flex-col overflow-hidden bg-bg-main">
-            {/* Header with Filters */}
             <div className="p-4 border-b border-border-main bg-bg-card">
                 <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                     <h2 className="text-xl font-bold text-white flex items-center">
@@ -166,7 +197,6 @@ export default function ResponderDashboard() {
             </div>
 
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-                {/* Left Panel - Reports List */}
                 <div className="w-full md:w-96 border-r border-border-main bg-bg-card overflow-y-auto no-scrollbar">
                     <div className="p-4 border-b border-border-main">
                         <h3 className="text-lg font-semibold text-text-primary">Recent Reports</h3>
@@ -178,9 +208,9 @@ export default function ResponderDashboard() {
                             <div className="text-text-secondary text-center py-8">
                                 <p>No reports found</p>
                                 <p className="text-xs text-text-muted mt-2">
-                                    {selectedType !== 'all' || selectedDepartment !== 'all' 
+                                    {selectedType !== 'all' 
                                         ? 'Try adjusting your filters' 
-                                        : 'No reports available for your department'}
+                                        : 'No reports currently assigned to you'}
                                 </p>
                             </div>
                         ) : (
@@ -201,6 +231,16 @@ export default function ResponderDashboard() {
                                         </div>
                                         <p className="text-sm text-text-primary mb-2 line-clamp-2">{report.description}</p>
                                         <div className="flex justify-between items-center text-xs">
+                                {selectedReport && (
+                                    <Button 
+                                        onClick={handleForward} 
+                                        disabled={forwarding}
+                                        className="mt-4 w-full"
+                                        variant="outline"
+                                    >
+                                        {forwarding ? 'Forwarding...' : 'Forward to Nearby Responder'}
+                                    </Button>
+                                )}
                                             <div className="flex items-center text-text-secondary">
                                                 <MapPin size={12} className="mr-1" />
                                                 {report.location.lat.toFixed(3)}, {report.location.lng.toFixed(3)}
@@ -214,7 +254,6 @@ export default function ResponderDashboard() {
                     </div>
                 </div>
 
-                {/* Center - Map */}
                 <div className="flex-1 relative h-full min-h-[400px]">
                     <LiveMap
                         incidents={reports}
@@ -223,7 +262,6 @@ export default function ResponderDashboard() {
                     />
                 </div>
 
-                {/* Right Panel - Available Employees */}
                 <div className="w-full md:w-80 border-l border-border-main bg-bg-card overflow-y-auto no-scrollbar">
                     <div className="p-4 border-b border-border-main">
                         <h3 className="text-lg font-semibold text-text-primary flex items-center">
@@ -260,7 +298,6 @@ export default function ResponderDashboard() {
                         )}
                     </div>
 
-                    {/* Assign Button */}
                     {selectedReport && selectedEmployee && (
                         <div className="p-4 border-t border-border-main bg-bg-secondary">
                             <div className="mb-2">

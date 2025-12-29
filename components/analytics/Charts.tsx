@@ -6,12 +6,12 @@ import {
     BarChart, Bar, AreaChart, Area
 } from 'recharts';
 
-// --- Types ---
+
 type PieData = { name: string; value: number; color: string };
 type LineData = { time: string; incidents: number; resolved: number };
 type BarData = { name: string; count: number };
 
-// --- Props ---
+
 interface ChartsProps {
     pieData: PieData[];
     lineData: LineData[];
@@ -39,9 +39,9 @@ export function AnalyticsCharts({ pieData, lineData, barData }: ChartsProps) {
     return (
         <div className="grid lg:grid-cols-2 gap-8">
 
-            {/* Line Chart: Incidents Over Time (Significantly customized) */}
+            {}
             <div className="relative overflow-hidden bg-gradient-to-br from-blue-900/40 via-blue-950/40 to-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 shadow-[0_0_40px_rgba(59,130,246,0.15)] group">
-                {/* Glass Shine Effect */}
+                {}
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-500/5 to-transparent pointer-events-none"></div>
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
 
@@ -93,7 +93,7 @@ export function AnalyticsCharts({ pieData, lineData, barData }: ChartsProps) {
                 </div>
             </div>
 
-            {/* Pie Chart: Incident Distribution */}
+            {}
             <div className="bg-bg-secondary/50 backdrop-blur-sm p-6 rounded-xl border border-border-main">
                 <h3 className="text-lg font-bold text-white mb-6">Incident Distribution</h3>
                 <div className="h-[300px] w-full">
@@ -120,7 +120,7 @@ export function AnalyticsCharts({ pieData, lineData, barData }: ChartsProps) {
                 </div>
             </div>
 
-            {/* Bar Chart: Dangerous Areas */}
+            {}
             <div className="bg-bg-secondary/50 backdrop-blur-sm p-6 rounded-xl border border-border-main lg:col-span-2">
                 <h3 className="text-lg font-bold text-white mb-6">High Risk Zones & Top Responders</h3>
                 <div className="h-[300px] w-full">

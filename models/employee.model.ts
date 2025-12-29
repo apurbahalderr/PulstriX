@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { Department } from "@/types";
 
-//ye user nahi h lekin responder bhi nahi h, to iska model me responder juda hoga
 export interface IEmployee extends Document {
     name: string;
     email: string;
     phone: number;
     role: "employee";
-    responder?: string; //ye responder ka id hoga jisse ye juda hoga aur ye tabhi aayega jab responder is employee ka email dalega
-    department: string;
+    responder?: string;
+    department: Department;
     reportIdAssigned?: string;
     status: "idle" | "busy";
     location?: { lat: number, lng: number };
@@ -19,7 +19,20 @@ const EmployeeSchema = new Schema<IEmployee>({
     phone: { type: Number, required: true },
     role: { type: String, enum: ["employee"], default: "employee" },
     responder: { type: String },
-    department: { type: String, required: true },
+    department: { 
+        type: String, 
+        required: true,
+        enum: [
+            "Fire Department",
+            "Traffic Police",
+            "Health Department",
+            "Police Department",
+            "Disaster Management",
+            "Public Works Department",
+            "General",
+            "Emergency Response"
+        ]
+    },
     reportIdAssigned: { type: String },
     status: { type: String, enum: ["idle", "busy"], default: "idle" },
     location: {

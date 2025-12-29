@@ -1,7 +1,7 @@
-# --------------------------------------------------
-# Priority Classification System
-# Hard Rules + Hugging Face Chat LLM
-# --------------------------------------------------
+
+
+
+
 
 from typing import Dict
 import json
@@ -12,9 +12,9 @@ import requests
 from dotenv import load_dotenv
 
 
-# --------------------------------------------------
-# LOAD ENV
-# --------------------------------------------------
+
+
+
 
 load_dotenv()
 
@@ -26,9 +26,9 @@ HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
 HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct:novita"
 
 
-# --------------------------------------------------
-# HARD SAFETY RULES
-# --------------------------------------------------
+
+
+
 
 CRITICAL_KEYWORDS = [
     "bleeding",
@@ -68,9 +68,9 @@ def apply_hard_rules(payload: Dict):
     return None
 
 
-# --------------------------------------------------
-# PROMPT BUILDER
-# --------------------------------------------------
+
+
+
 
 def build_prompt(payload: Dict) -> str:
     return f"""
@@ -100,9 +100,9 @@ JSON format:
 """.strip()
 
 
-# --------------------------------------------------
-# LLM CALL (HF CHAT API)
-# --------------------------------------------------
+
+
+
 
 def call_llm(prompt: str) -> Dict:
     try:
@@ -140,7 +140,7 @@ def call_llm(prompt: str) -> Dict:
 
         content = result["choices"][0]["message"]["content"].strip()
 
-        # Defensive cleanup
+        
         if content.startswith("```"):
             content = re.sub(r"```json|```", "", content).strip()
 
@@ -155,9 +155,9 @@ def call_llm(prompt: str) -> Dict:
         }
 
 
-# --------------------------------------------------
-# MAIN CLASSIFIER
-# --------------------------------------------------
+
+
+
 
 def classify_priority(payload: Dict) -> Dict:
     """
@@ -172,7 +172,7 @@ def classify_priority(payload: Dict) -> Dict:
     }
     """
 
-    # 1️⃣ Hard rules first
+    
     rule_result = apply_hard_rules(payload)
     if rule_result:
         return {
@@ -180,7 +180,7 @@ def classify_priority(payload: Dict) -> Dict:
             **rule_result
         }
 
-    # 2️⃣ LLM fallback
+    
     llm_result = call_llm(build_prompt(payload))
 
     priority = llm_result.get("priority", "MEDIUM")
@@ -202,9 +202,9 @@ def classify_priority(payload: Dict) -> Dict:
     }
 
 
-# --------------------------------------------------
-# LOCAL TEST
-# --------------------------------------------------
+
+
+
 
 if __name__ == "__main__":
 

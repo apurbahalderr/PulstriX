@@ -22,7 +22,6 @@ export default function EmployeeDashboard() {
 
     useEffect(() => {
         fetchTasks();
-        // Poll for new tasks every 5 seconds
         const interval = setInterval(fetchTasks, 5000);
         return () => clearInterval(interval);
     }, []);
@@ -53,7 +52,6 @@ export default function EmployeeDashboard() {
                 return;
             }
 
-            // Use 'rejected' for the API (it handles both rejected and passed)
             const apiAction = action === 'passed' ? 'rejected' : action;
 
             const response = await fetch('/api/assignAccepted', {
@@ -75,7 +73,6 @@ export default function EmployeeDashboard() {
                 } else {
                     alert('Task passed. Responder will assign it to another employee.');
                 }
-                // Refresh tasks after a short delay to allow backend to process
                 setTimeout(() => {
                     fetchTasks();
                 }, 1000);
@@ -92,7 +89,6 @@ export default function EmployeeDashboard() {
 
     return (
         <div className="h-[calc(100vh-64px)] relative flex flex-col overflow-hidden bg-bg-main">
-            {/* Header */}
             <div className="p-4 border-b border-border-main bg-bg-card">
                 <h2 className="text-xl font-bold text-white flex items-center">
                     <LayoutDashboard className="mr-2 text-primary" /> Employee Dashboard
@@ -101,7 +97,6 @@ export default function EmployeeDashboard() {
             </div>
 
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-                {/* Left Panel - Tasks List */}
                 <div className="w-full md:w-96 border-r border-border-main bg-bg-card overflow-y-auto no-scrollbar">
                     <div className="p-4 border-b border-border-main">
                         <h3 className="text-lg font-semibold text-text-primary">Assigned Tasks</h3>
@@ -179,7 +174,6 @@ export default function EmployeeDashboard() {
                     </div>
                 </div>
 
-                {/* Right - Map */}
                 <div className="flex-1 relative h-full min-h-[400px]">
                     {tasks.length > 0 ? (
                         <LiveMap
@@ -188,8 +182,6 @@ export default function EmployeeDashboard() {
                             className="h-full w-full"
                             userLocation={user?.location}
                             selectedIncident={(() => {
-                                // If there's a task and user has location, create a selectedIncident with employeeLocation
-                                // to trigger the path drawing in LiveMap
                                 if (tasks.length > 0 && user?.location) {
                                     return {
                                         ...tasks[0],

@@ -3,6 +3,7 @@ import { Report } from "@/models/report.model";
 import { dbConnect } from "@/utils/dbConnect";
 import { NextResponse, type NextRequest } from "next/server";
 import ApiResponse from "@/utils/ApiResopnse";
+import { sendNotification } from "@/utils/sendNotification";
 
 const departmentMapping: Record<string, string> = {
     "fire": "Fire Department",
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     console.log("Forward Report to Another Responder");
     try {
         const body = await req.json();
-        const { reportId, currentResponderId } = body;
+        const { reportId, responderId } = body; // responderId is the current responder who is forwarding
 
         if (!reportId) {
             return NextResponse.json(new ApiResponse(false, "Report ID is required", null), { status: 400 });
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
 
         const nearbyResponders = await Responder.find({
             department: department,
-            _id: { $ne: currentResponderId }, // Exclude current
+            _id: { $ne: responderId }, 
             location: {
                 $near: {
                     $geometry: {
@@ -82,8 +83,8 @@ export async function POST(req: NextRequest) {
 
         let bestResponder = nearbyResponders[0];
 
-        // Use LocationIQ to find the one with shortest travel time
-        // Only if we have coordinates for them (which we should if $near worked)
+        
+        
         const destinations = nearbyResponders.map(r => ({
             lat: r.location.lat,
             lng: r.location.lng
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
         const travelTimes = await getTravelTimes(report.location, destinations);
 
         if (travelTimes && travelTimes.length === nearbyResponders.length) {
-            // Find index of minimum duration
+            
             let minTime = Infinity;
             let minIndex = 0;
             
@@ -109,11 +110,19 @@ export async function POST(req: NextRequest) {
             console.log("Using straight-line distance fallback");
         }
 
-        // Update Report
+        
         const updatedReport = await Report.findByIdAndUpdate(reportId, {
             $push: { responderId: bestResponder._id },
             $set: { status: "assigning" } 
         }, { new: true });
+
+        // Notify the new responder
+        sendNotification({
+            title: "Forwarded Incident Received",
+            message: `A ${report.severity} priority ${report.type} incident has been forwarded to you.`,
+            url: "/responder/dashboard",
+            userId: bestResponder._id.toString()
+        }).catch(err => console.error("Failed to notify new responder", err));
 
         return NextResponse.json(new ApiResponse(true, "Report forwarded successfully", {
             responder: bestResponder,

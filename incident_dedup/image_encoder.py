@@ -6,7 +6,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 
-# Load model
+
 weights = ResNet50_Weights.DEFAULT
 model = resnet50(weights=weights)
 model = torch.nn.Sequential(*list(model.children())[:-1])
@@ -30,14 +30,14 @@ def encode_image_from_url(image_source: str) -> torch.Tensor:
     """
 
     try:
-        # Convert to absolute path if local file
+        
         abs_path = os.path.abspath(image_source)
 
-        # 🟢 CASE 1: Local file exists
+        
         if os.path.isfile(abs_path):
             image = Image.open(abs_path).convert("RGB")
 
-        # 🟢 CASE 2: URL
+        
         else:
             headers = {
                 "User-Agent": "Mozilla/5.0 (IncidentDedup/1.0)"

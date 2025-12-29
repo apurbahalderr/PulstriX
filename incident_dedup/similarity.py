@@ -8,11 +8,11 @@ def cosine_similarity(emb1: torch.Tensor, emb2: torch.Tensor) -> float:
     Returns a value between 0 and 1.
     """
 
-    # Normalize vectors
+    
     emb1_norm = emb1 / emb1.norm()
     emb2_norm = emb2 / emb2.norm()
 
-    # Cosine similarity
+    
     similarity = torch.dot(emb1_norm, emb2_norm)
 
     return similarity.item()
@@ -22,7 +22,7 @@ def haversine_distance(lat1, lon1, lat2, lon2) -> float:
     Computes distance (in meters) between two GPS points.
     """
 
-    R = 6371000  # Earth radius in meters
+    R = 6371000  
 
     phi1 = math.radians(lat1)
     phi2 = math.radians(lat2)

@@ -6,7 +6,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Report } from "@/types";
 
-// Fix for default marker icons in Next.js
 const iconUrl = "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png";
 const iconRetinaUrl = "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png";
 const shadowUrl = "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png";
@@ -24,7 +23,6 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Custom Icons based on severity
 const createCustomIcon = (color: string) => {
     return L.divIcon({
         className: "custom-pin",
@@ -35,10 +33,10 @@ const createCustomIcon = (color: string) => {
 };
 
 const icons: Record<string, L.DivIcon> = {
-    high: createCustomIcon("#EF4444"),     // Red
-    medium: createCustomIcon("#F97316"),   // Orange
-    low: createCustomIcon("#22C55E"),      // Green
-    default: createCustomIcon("#3B82F6"),  // Blue
+    high: createCustomIcon("#EF4444"),
+    medium: createCustomIcon("#F97316"),
+    low: createCustomIcon("#22C55E"),
+    default: createCustomIcon("#3B82F6"),
 };
 
 interface Location {
@@ -46,9 +44,8 @@ interface Location {
     lng: number;
 }
 
-// Responder Icon
 const responderIcon = L.divIcon({
-    className: "", // Empty class to avoid default styles interfering
+    className: "",
     html: `<div style="background-color: #14B8A6; width: 40px; height: 40px; border-radius: 50%; border: 3px solid #FFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px #14B8A6; font-size: 20px; position: relative; z-index: 1000;">🚑</div>`,
     iconSize: [40, 40],
     iconAnchor: [20, 20],

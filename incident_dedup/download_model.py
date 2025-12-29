@@ -4,7 +4,7 @@ import os
 
 def download():
     print("Downloading ResNet50 model...")
-    # This triggers the download of the weights to the cache
+    
     weights = ResNet50_Weights.DEFAULT
     resnet50(weights=weights)
     print("Model downloaded successfully.")

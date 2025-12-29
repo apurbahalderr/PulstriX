@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
             throw new Error("Report creation failed")
         }
 
-        verifyByMLModel(newReport._id, image, severity, type, location, description).catch(err => {
+        verifyByMLModel(newReport.id, image, severity, type, location, description).catch(err => {
             console.error("Background verification failed:", err);
         });
 

@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
         const { _id } = res.data as jwt.JwtPayload;
         await dbConnect();
 
-        // Get responder's department
+        
         const responder = await Responder.findById(_id);
         if (!responder) {
             return NextResponse.json(
@@ -26,50 +26,24 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        // Get query parameters for filtering
+        
         const { searchParams } = new URL(req.url);
         const typeFilter = searchParams.get('type');
-        const departmentFilter = searchParams.get('department');
 
-        // Map report types to departments
-        const departmentMapping: Record<string, string> = {
-            "Fire": "Fire Department",
-            "Accident": "Traffic Police",
-            "Medical": "Health Department",
-            "Crime": "Police Department",
-            "Disaster": "Disaster Management",
-            "Infrastructure Collapse": "Public Works Department",
-            "Other": "General",
-            "Emergency": "Police Department"
+        // Query to find reports where the LAST element of responderId array matches the current responder's ID
+        // We use $arrayElemAt with -1 to get the last element of the array
+        let query: any = {
+            $expr: { 
+                $eq: [ 
+                    { $arrayElemAt: [ "$responderId", -1 ] }, 
+                    _id 
+                ] 
+            }
         };
 
-        // Build query
-        let query: any = {};
-
-        // Determine target department (use filter if specified, otherwise responder's department)
-        const targetDepartment = (departmentFilter && departmentFilter !== 'all')
-            ? departmentFilter
-            : responder.department;
-
-        // Get report types that match the target department
-        const matchingTypes = Object.entries(departmentMapping)
-            .filter(([_, dept]) => dept === targetDepartment)
-            .map(([type, _]) => type);
-
-        // If we have matching types, filter by them
-        if (matchingTypes.length > 0) {
-            query.type = { $in: matchingTypes };
-        }
-
-        // Further filter by specific type if specified (must also match department)
+        // Optional type filtering
         if (typeFilter && typeFilter !== 'all') {
-            // Check if the type filter matches the department
-            if (matchingTypes.includes(typeFilter)) {
-                query.type = typeFilter;
-            } else {
-                // Type doesn't match department, return empty results
-                query.type = { $in: [] };
-            }
+            query.type = typeFilter;
         }
 
         const reports = await Report.find(query)

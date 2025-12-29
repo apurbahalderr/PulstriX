@@ -42,7 +42,7 @@ const ReportSchema = new Schema<IReport>({
     image: { type: String },
     upvotes: { type: Number, default: 0 },
     downvotes: { type: Number, default: 0 },
-    votedBy: [{ type: String }], // Array of sessionIds who have voted
+    votedBy: [{ type: String }],
     duplicates: { type: Number, default: 0 },
     severity: { type: String, enum: ["high", "medium", "low"], default: "low" },
     status: { type: String, enum: ["resolved", "verified", "unverified", "assigning", "assigned"], default: "unverified" },

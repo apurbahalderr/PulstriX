@@ -10,26 +10,32 @@ export type ReportType =
   | 'Fire'
   | 'Emergency';
 
-// "high" | "medium" | "low"
 export type ReportSeverity = 'high' | 'medium' | 'low';
 
-// "resolved" | "verified" | "unverified" | "assigning" | "assigned"
 export type ReportStatus = 'resolved' | 'verified' | 'unverified' | 'assigning' | 'assigned';
+
+export type Department = 
+  | "Fire Department"
+  | "Traffic Police"
+  | "Health Department"
+  | "Police Department"
+  | "Disaster Management"
+  | "Public Works Department"
+  | "General"
+  | "Emergency Response";
 
 export interface User {
   _id?: string;
-  id?: string; // For compatibility with localStorage stored user
+  id?: string;
   name: string;
   email: string;
   phone: number;
-  sessionId?: string; // Optional for employees/responders
+  sessionId?: string;
   role: UserRole;
-  department?: string;
-  // Responder specific
+  department?: Department | string;
   location?: { lat: number, lng: number };
   address?: string;
   employees?: string[];
-  // Employee specific
   responder?: string;
   reportIdAssigned?: string;
   status?: 'idle' | 'busy';
@@ -38,7 +44,7 @@ export interface User {
 export interface Report {
   _id: string;
   sessionId: string;
-  userId?: string; // reporterId
+  userId?: string;
   type: ReportType | string;
   location: {
     lat: number;
@@ -59,14 +65,13 @@ export interface Report {
   duplicates: number;
   severity: ReportSeverity;
   status: ReportStatus;
-  createdAt: string; // ISO date string from JSON
+  createdAt: string;
   updatedAt: string;
 }
 
-// Map Component specific (optional, if needed to keep separate)
 export interface MapPin {
-  id: string; // report id
+  id: string;
   lat: number;
   lng: number;
-  type: ReportSeverity | 'verified'; // illustrative custom type
+  type: ReportSeverity | 'verified';
 }

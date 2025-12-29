@@ -30,14 +30,13 @@ export function IncidentFeed() {
         };
 
         fetchIncidents();
-        
-        // Poll for updates every 30 seconds
+
         const interval = setInterval(fetchIncidents, 30000);
         return () => clearInterval(interval);
     }, []);
 
     const handleVote = async (e: React.MouseEvent, reportId: string, action: 'upvote' | 'downvote') => {
-        e.stopPropagation(); // Prevent card click
+        e.stopPropagation();
         if (isVoting) return;
 
         const sessionId = localStorage.getItem("sessionId");
@@ -55,7 +54,7 @@ export function IncidentFeed() {
             });
             const data = await response.json();
             if (data.success) {
-                // Update local state
+        
                 setIncidents(prev => prev.map(inc => 
                     inc._id === reportId ? data.data : inc
                 ));
@@ -102,7 +101,7 @@ export function IncidentFeed() {
                 <p className="text-xs text-text-secondary">File a new report on the right.</p>
             </div>
 
-            {/* Incident Details Modal */}
+
             {selectedIncident && (
                 <IncidentDetailsModal 
                     incident={selectedIncident} 

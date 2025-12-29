@@ -4,13 +4,13 @@ import { Github, Twitter, Linkedin, Heart } from "lucide-react";
 export function Footer() {
     return (
         <footer className="relative mt-20 border-t border-white/10 overflow-hidden">
-            {/* Glass Effect Background */}
+            {}
             <div className="absolute inset-0 bg-black/40 backdrop-blur-xl -z-10"></div>
             <div className="absolute top-0 left-1/4 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
 
             <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-12">
-                    {/* Brand */}
+                    {}
                     <div className="md:col-span-2 space-y-4">
                         <Link href="/" className="inline-flex items-center gap-2 group">
                             <img src="/logonew.png" alt="Pulstrix" className="h-10 w-10 object-contain group-hover:scale-110 transition-transform" />
@@ -23,7 +23,7 @@ export function Footer() {
                         </p>
                     </div>
 
-                    {/* Quick Links */}
+                    {}
                     <div>
                         <h3 className="text-white font-semibold mb-6 flex items-center gap-2">
                             Platform
@@ -40,7 +40,7 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    {/* Legal */}
+                    {}
                     <div>
                         <h3 className="text-white font-semibold mb-6">Legal</h3>
                         <ul className="space-y-3">
@@ -55,7 +55,7 @@ export function Footer() {
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
+                {}
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-text-muted text-xs">
                         © {new Date().getFullYear()} PulstriX. All rights reserved.

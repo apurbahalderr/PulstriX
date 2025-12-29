@@ -16,7 +16,7 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string>('');
 
-    // Form state
+    
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -54,7 +54,7 @@ export default function LoginPage() {
             let userData;
 
             if (selectedRole === 'user') {
-                // Set session ID for citizen
+                
                 setSessionId();
                 const sessionId = localStorage.getItem('sessionId') || '';
 
@@ -109,7 +109,7 @@ export default function LoginPage() {
                     department: data.data.department,
                 };
             } else if (selectedRole === 'responder') {
-                // Get user location for responder
+                
                 let location = { lat: 0, lng: 0 };
                 let address = formData.address;
 
@@ -224,14 +224,27 @@ export default function LoginPage() {
                             />
 
                             {(selectedRole === 'employee' || selectedRole === 'responder') && (
-                                <Input
-                                    label="Department"
-                                    type="text"
-                                    required
-                                    value={formData.department}
-                                    onChange={(e) => handleInputChange('department', e.target.value)}
-                                    placeholder="Enter your department"
-                                />
+                                <div className="w-full">
+                                    <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                                        Department
+                                    </label>
+                                    <select
+                                        required
+                                        value={formData.department}
+                                        onChange={(e) => handleInputChange('department', e.target.value)}
+                                        className="block w-full bg-bg-secondary border border-border-main rounded-lg py-2 px-3 text-text-primary placeholder-text-muted focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="" disabled>Select your department</option>
+                                        <option value="Fire Department">Fire Department</option>
+                                        <option value="Traffic Police">Traffic Police</option>
+                                        <option value="Health Department">Health Department</option>
+                                        <option value="Police Department">Police Department</option>
+                                        <option value="Disaster Management">Disaster Management</option>
+                                        <option value="Public Works Department">Public Works Department</option>
+                                        <option value="General">General</option>
+                                        <option value="Emergency Response">Emergency Response</option>
+                                    </select>
+                                </div>
                             )}
 
                             {selectedRole === 'responder' && (

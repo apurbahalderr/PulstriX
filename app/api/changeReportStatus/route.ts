@@ -2,6 +2,7 @@ import ApiResponse from "@/utils/ApiResopnse";
 import { dbConnect } from "@/utils/dbConnect";
 import { type NextRequest, NextResponse } from "next/server";
 import { Report } from "@/models/report.model";
+import { Employee } from "@/models/employee.model";
 
 export async function POST(req: NextRequest) {
     try {
@@ -32,7 +33,19 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(new ApiResponse(false, "Report not found", null), { status: 404 });
         }
 
-        if (status) report.status = status;
+        if (status) {
+            report.status = status;
+
+            if (status === "resolved" && report.employeeId && report.employeeId.length > 0) {
+                await Employee.updateMany(
+                    { _id: { $in: report.employeeId } },
+                    { 
+                        $set: { status: "idle" },
+                        $unset: { reportIdAssigned: "" }
+                    }
+                );
+            }
+        }
         if (severity) report.severity = severity;
 
         await report.save();

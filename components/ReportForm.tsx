@@ -18,10 +18,10 @@ export default function ReportForm({ onSubmit, onCancel, userLocation }: ReportF
         e.preventDefault();
         setLoading(true);
 
-        // Simulate AI classification
+        
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Simple keyword based "AI" for hackathon demo
+        
         let severity = "low";
         const curDesc = description.toLowerCase();
         if (curDesc.includes("fire") || curDesc.includes("blood") || curDesc.includes("gun") || curDesc.includes("explosion")) {

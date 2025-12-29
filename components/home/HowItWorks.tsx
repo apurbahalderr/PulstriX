@@ -35,7 +35,7 @@ export function HowItWorks() {
                 </div>
 
                 <div className="relative grid md:grid-cols-4 gap-8">
-                    {/* Connecting Line (Desktop) */}
+                    {}
                     <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-border-main z-0 transform -translate-y-1/2"></div>
 
                     {steps.map((step, index) => (

@@ -44,15 +44,31 @@ export async function checkTextDuplicate(text: string, lat?: number, lng?: numbe
     }
 }
 
-export async function checkImageDuplicate(imageUrl: string, lat: number, lng: number) {
+export async function checkImageDuplicate(imageUrl: string, lat: number, lng: number, candidates: any[]) {
     try {
-        // Construct payload matching DeduplicationRequest in incident_dedup/schemas.py
-        // It expects new_image and candidate_images. 
-        // In a real scenario, we'd need to fetch candidates from DB.
-        // For now, we might just send the new image to get an embedding or similar if the API supported it,
-        // but the current API requires candidates.
-        // We will skip full implementation here as it requires DB query logic.
-        return null; 
+        const res = await fetch(`${IMAGE_DEDUP_URL}/deduplicate-image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                new_image: {
+                    image_id: "new_img",
+                    image_url: imageUrl,
+                    latitude: lat,
+                    longitude: lng,
+                    timestamp: new Date().toISOString()
+                },
+                candidate_images: candidates.map(c => ({
+                    image_id: c._id,
+                    incident_id: c._id,
+                    image_url: c.image,
+                    latitude: c.location.lat,
+                    longitude: c.location.lng,
+                    timestamp: c.createdAt
+                }))
+            })
+        });
+        if (!res.ok) throw new Error(`ML Service Error: ${res.statusText}`);
+        return await res.json();
     } catch (e) {
         console.error("Image Dedup ML Error", e);
         return null;

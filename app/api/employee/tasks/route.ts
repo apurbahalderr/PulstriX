@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
         const { _id } = res.data as jwt.JwtPayload;
         await dbConnect();
 
-        // Get employee
+        
         const employee = await Employee.findById(_id);
         if (!employee) {
             return NextResponse.json(
@@ -26,17 +26,17 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        // Get assigned report if any
+        
         if (!employee.reportIdAssigned) {
             return NextResponse.json(
                 new ApiResponse(true, "No tasks assigned", []), { status: 200 }
             );
         }
 
-        // Get the report
+        
         const report = await Report.findById(employee.reportIdAssigned);
         if (!report) {
-            // Clean up invalid assignment
+            
             await Employee.findByIdAndUpdate(_id, { reportIdAssigned: undefined });
             return NextResponse.json(
                 new ApiResponse(true, "No tasks assigned", []), { status: 200 }

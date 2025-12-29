@@ -7,9 +7,11 @@ interface IdleEmployeesProps {
     employees: User[];
     handleAssign: (employeeId: string) => void;
     onClose?: () => void;
+    onForward?: () => void;
+    isForwarding?: boolean;
 }
 
-const IdleEmployees = ({ employees, handleAssign, onClose }: IdleEmployeesProps) => {
+const IdleEmployees = ({ employees, handleAssign, onClose, onForward, isForwarding }: IdleEmployeesProps) => {
     
 
     return (
@@ -25,7 +27,20 @@ const IdleEmployees = ({ employees, handleAssign, onClose }: IdleEmployeesProps)
 
             <div className="overflow-y-auto p-2 space-y-2 no-scrollbar">
                 {employees.length === 0 ? (
-                    <div className="text-center text-text-muted py-4 text-sm">No idle units found.</div>
+                    <div className="text-center text-text-muted py-4 text-sm">
+                        <p className="mb-3">No idle units found.</p>
+                        {onForward && (
+                            <Button 
+                                onClick={onForward} 
+                                disabled={isForwarding}
+                                className="w-full"
+                                variant="outline"
+                                size="sm"
+                            >
+                                {isForwarding ? 'Forwarding...' : 'Forward to Nearby Responder'}
+                            </Button>
+                        )}
+                    </div>
                 ) : (
                     employees.map((emp) => (
                         <div key={emp._id} className="bg-bg-main p-3 rounded-lg border border-border-main hover:border-primary/30 transition-colors">

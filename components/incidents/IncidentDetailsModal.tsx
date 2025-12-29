@@ -17,7 +17,7 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
   const pathname = usePathname();
   const isDashboard = pathname?.includes('dashboard');
 
-  // If position is provided, we render as a popover
+  
   const style = position ? {
     position: 'fixed' as const,
     bottom: "20px",
@@ -34,7 +34,7 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
       style={style}
       onClick={e => e.stopPropagation()}
     >
-      {/* Header */}
+      {}
       <div className="p-4 border-b border-border-main flex justify-between items-start bg-bg-secondary">
         <div>
           <div className="flex gap-2 items-center mb-1">
@@ -64,9 +64,9 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
         </button>
       </div>
 
-      {/* Scrollable Content */}
+      {}
       <div className="overflow-y-auto p-6 space-y-6 no-scrollbar">
-        {/* Description */}
+        {}
         <div>
           <h3 className="text-sm font-semibold text-text-secondary mb-2 uppercase tracking-wider">Description</h3>
           <p className="text-text-primary leading-relaxed text-lg">
@@ -74,8 +74,8 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
           </p>
         </div>
 
-        {/* Report Stats */}
-        {/* Report Stats - Compact Tags */}
+        {}
+        {}
         <div className="flex flex-wrap gap-2">
           <Badge priority={incident.severity} className="flex items-center gap-1">
             AI Score: {incident.severity === 'high' ? 'High' : incident.severity === 'medium' ? 'Med' : 'Low'}
@@ -95,7 +95,7 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
           </div>
         </div>
 
-        {/* Image & Location Action */}
+        {}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Evidence</h3>
@@ -120,11 +120,11 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
 
           <div className="rounded-xl overflow-hidden border border-border-main bg-bg-secondary flex items-center justify-center min-h-[200px]">
             {incident.image ? (
-              // Using standard img tag for simplicity if unsure about domain config, 
-              // or Next.js Image if configured. 
-              // Given previous context, sticking to standard img is safer unless we know domain.
-              // But prompt said "reconfigure dashboard page...". 
-              // I'll use standard img with object-cover.
+              
+              
+              
+              
+              
               <img
                 src={incident.image}
                 alt="Incident Evidence"
@@ -140,7 +140,7 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
         </div>
       </div>
 
-      {/* Footer Actions */}
+      {}
       <div className="p-4 border-t border-border-main bg-bg-secondary flex gap-3">
         <Button
           onClick={(e) => onVote(e, incident._id, 'upvote')}
@@ -165,13 +165,7 @@ export function IncidentDetailsModal({ incident, onClose, onVote, onLocationClic
   if (position) {
     return (
       <div className="fixed inset-0 z-50 pointer-events-none" onClick={onClose}>
-        {/* Transparent overlay that catches clicks only if we want to close on outside click. 
-            But to keep map interactive, we might want to NOT block events? 
-            User said "appear over the card... map should be clearly visible".
-            If I make this pointer-events-none, I can't close by clicking outside.
-            Actually, let's make the wrapper pointer-events-none and the modal content pointer-events-auto.
-            To allow map interaction, we shouldn't have a full screen blocker.
-             */}
+        {}
         <div className="pointer-events-auto contents">
           {content}
         </div>
