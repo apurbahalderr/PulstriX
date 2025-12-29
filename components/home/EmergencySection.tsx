@@ -15,21 +15,48 @@ export function EmergencySection() {
         setShowConfirmModal(false); // Close confirm modal
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 console.log("SOS Location:", position.coords);
-                // Simulate network delay
-                setTimeout(() => {
+                
+                try {
+                    const sessionId = localStorage.getItem("sessionId");
+                    const response = await fetch('/api/sos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            location: {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            },
+                            sessionId: sessionId
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        setShowSuccessModal(true);
+                    } else {
+                        alert("Failed to send SOS: " + (data.error || "Unknown error"));
+                    }
+                } catch (error) {
+                    console.error("SOS Error:", error);
+                    alert("Failed to send SOS due to network error.");
+                } finally {
                     setIsSOSLoading(false);
-                    setShowSuccessModal(true);
-                }, 2000);
+                }
             },
-            (error) => {
+            async (error) => {
                 console.error("Location error:", error);
-                // Fallback for location (still send alerting manual location needed)
-                setTimeout(() => {
-                    setIsSOSLoading(false);
-                    setShowSuccessModal(true);
-                }, 1000);
+                // Fallback: Send SOS without precise location if possible, or alert user
+                // For now, we'll try to send with a flag or null location if API supports it, 
+                // or just alert the user they need location enabled.
+                
+                // Assuming API requires location for SOS to be effective.
+                alert("Location access is required to send SOS.");
+                setIsSOSLoading(false);
             }
         );
     };
