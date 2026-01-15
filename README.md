@@ -1,6 +1,7 @@
 # 🚨 PulstriX: Intelligent Emergency Response System
 
 **Live Website**: [https://pulstrix.vercel.app](https://pulstrix.vercel.app)
+
 **For Responder Login**: Use RESPONDER2025 as the access code
 
 ![PulstriX Banner](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
