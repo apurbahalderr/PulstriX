@@ -1,6 +1,7 @@
 # PulstriX: Smart Emergency Response Platform
 
 **Live Website**: [https://pulstrix.vercel.app](https://pulstrix.vercel.app)
+**For Responder Login**: Use RESPONDER2025 as the access code
 
 ## 🚨 What is PulstriX?
 

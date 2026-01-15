@@ -12,10 +12,6 @@ app = FastAPI(
 )
 
 
-
-
-
-
 class PriorityRequest(BaseModel):
     incident_id: str
     incident_type: str
@@ -48,9 +44,6 @@ class PriorityResponse(BaseModel):
 @app.post("/priority/classify", response_model=PriorityResponse)
 def classify_incident(payload: PriorityRequest):
     data = payload.dict()
-
-    
-    
     
     
     if data.get("report_count") is None:

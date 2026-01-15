@@ -27,9 +27,6 @@ app = FastAPI(
 
 @app.post("/deduplicate-image", response_model=DeduplicationResponse)
 def deduplicate_image(request: DeduplicationRequest):
-
-    
-    
     
     try:
         new_embedding = encode_image_from_url(
