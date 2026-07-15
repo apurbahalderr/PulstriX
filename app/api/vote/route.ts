@@ -8,6 +8,9 @@ export async function POST(req: Request) {
         await dbConnect();
         const { reportId, action, sessionId } = await req.json();
 
+        // const body = await req.json();
+        // const { reportId, action, sessionId } = body;
+      
         if (!reportId || !['upvote', 'downvote'].includes(action) || !sessionId) {
             return NextResponse.json(
                 { success: false, error: "Invalid request. Missing reportId, action, or sessionId." },

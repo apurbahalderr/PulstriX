@@ -108,7 +108,13 @@ export default function DashboardPage() {
     };
 
     const handleVote = async (e: React.MouseEvent, reportId: string, action: 'upvote' | 'downvote') => {
-        e.stopPropagation();
+      e.stopPropagation();
+
+      const sessionId = localStorage.getItem("sessionId");
+      if (!sessionId) {
+          alert("Session ID missing. Please refresh the page.");
+          return;
+      }
 
         try {
             const res = await fetch('/api/vote', {
@@ -116,7 +122,7 @@ export default function DashboardPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ reportId, action }),
+                body: JSON.stringify({ reportId, action, sessionId }),
             });
 
             if (res.ok) {
