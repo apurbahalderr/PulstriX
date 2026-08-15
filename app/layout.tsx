@@ -6,7 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { RouteGuard } from "@/components/layout/RouteGuard";
-import {Analytics} from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,14 +40,13 @@ export default function RootLayout({
             <main className="grow pt-24">
               <PageTransition>
                 {children}
+                <Analytics />
               </PageTransition>
             </main>
             <Footer />
           </RouteGuard>
         </AuthProvider>
       </body>
-      <Analytics />
-
     </html>
   );
 }
