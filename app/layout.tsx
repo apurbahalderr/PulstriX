@@ -38,10 +38,8 @@ export default function RootLayout({
           <RouteGuard>
             <Navbar />
             <main className="grow pt-24">
-              <PageTransition>
-                {children}
-                <Analytics />
-              </PageTransition>
+              <PageTransition>{children}</PageTransition>
+              <Analytics />
             </main>
             <Footer />
           </RouteGuard>
